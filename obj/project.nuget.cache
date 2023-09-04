@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "iDAVYI/lwH5AL9nD6ivh1qJu8N7j+XXTXr5fhVR5GyUVz+xCO9yVnl/wCutQwKsrh6cegucbBWxed4h1wrUVJg==",
+  "success": true,
+  "projectFilePath": "D:\\MonoProject\\MonoProject.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\biba\\.nuget\\packages\\monogame.content.builder.task\\3.8.1.303\\monogame.content.builder.task.3.8.1.303.nupkg.sha512",
+    "C:\\Users\\biba\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.303\\monogame.framework.desktopgl.3.8.1.303.nupkg.sha512"
+  ],
+  "logs": []
+}
