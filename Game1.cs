@@ -41,7 +41,6 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        
 
         base.Draw(gameTime);
     }
