@@ -8,12 +8,12 @@ using ImGuiNET;
 
 namespace MonoProject
 {
-    abstract class ImGuiWindow
+    abstract class ImGuiWindow : IImGui
     {
-        ImGuiWindowFlags flags;
-        Num.Vector2 pos;
-        Num.Vector2 size;
-        String title;
+        protected ImGuiWindowFlags flags;
+        protected Num.Vector2 pos;
+        protected Num.Vector2 size;
+        protected String title;
 
         public ImGuiWindow(ImGuiWindowFlags flags, Num.Vector2 pos, Num.Vector2 size, String title)
         {
@@ -22,6 +22,7 @@ namespace MonoProject
             this.size = size;
             this.title = title;
         }
-        
+
+        public abstract void LayoutRealize(Action lo);      
     }
 }

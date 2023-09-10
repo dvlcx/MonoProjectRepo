@@ -8,12 +8,8 @@ using ImGuiNET;
 
 namespace MonoProject
 {
-    class ImGuiMainWindow : ImGuiWindow
+    class ImGuiMainMenuBar : IImGui
     {
-        public ImGuiMainWindow() : base()
-        {
-
-        }
-        
+        public void LayoutRealize(Action lo) => lo();
     }
 }
