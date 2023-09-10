@@ -146,24 +146,11 @@ namespace MonoProject
         protected virtual void SetupInput()
         {
             var io = ImGui.GetIO();
-
-            // MonoGame-specific //////////////////////
             _game.Window.TextInput += (s, a) =>
             {
                 if (a.Character == '\t') return;
                 io.AddInputCharacter(a.Character);
             };
-
-            ///////////////////////////////////////////
-
-            // FNA-specific ///////////////////////////
-            //TextInputEXT.TextInput += c =>
-            //{
-            //    if (c == '\t') return;
-
-            //    ImGui.GetIO().AddInputCharacter(c);
-            //};
-            ///////////////////////////////////////////
         }
 
         /// <summary>

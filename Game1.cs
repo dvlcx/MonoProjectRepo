@@ -5,33 +5,31 @@ using System;
 using System.IO;
 using Num = System.Numerics;
 using ImGuiNET;
+
 namespace MonoProject
 {
-
-
-    /// <summary>
-    /// Simple FNA + ImGui example
-    /// </summary>
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private ImGuiRenderer _imGuiRenderer;
-
+        public ImGuiRenderer _imGuiRenderer;
+        private ImGuiManager _imGuiManager;
         private Texture2D _xnaTexture;
         private IntPtr _imGuiTexture;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreferredBackBufferWidth = 1024;
-            _graphics.PreferredBackBufferHeight = 768;
-            _graphics.PreferMultiSampling = true;
-
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            Window.AllowUserResizing = true;
+            
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
+            _imGuiManager = new ImGuiManager(this);
+            Components.Add(_imGuiManager);
             _imGuiRenderer = new ImGuiRenderer(this);
             _imGuiRenderer.RebuildFontAtlas();
 
@@ -43,7 +41,7 @@ namespace MonoProject
             // Texture loading example
 
 			// First, load the texture as a Texture2D (can also be done using the XNA/FNA content pipeline)
-			_xnaTexture = CreateTexture(GraphicsDevice, 300, 150, pixel =>
+			_xnaTexture = ImGuiManager.CreateTexture(GraphicsDevice, 300, 150, pixel =>
 			{
 				var red = (pixel % 300) / 2;
 				return new Color(red, 1, 1);
@@ -55,17 +53,18 @@ namespace MonoProject
             base.LoadContent();
         }
 
+        protected override void Update(GameTime gameTime)
+        {
+
+            base.Update(gameTime);
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(new Color(clear_color.X, clear_color.Y, clear_color.Z));
 
-            // Call BeforeLayout first to set things up
             _imGuiRenderer.BeforeLayout(gameTime);
-
-            // Draw our UI
             ImGuiLayout();
-
-            // Call AfterLayout now to finish up and draw all the things
             _imGuiRenderer.AfterLayout();
 
             base.Draw(gameTime);
@@ -81,9 +80,48 @@ namespace MonoProject
 
         protected virtual void ImGuiLayout()
         {
+                
+            //main menu bar
+            {
+                ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 60);
+
+                ImGui.BeginMainMenuBar();
+                    if(ImGui.BeginMenu("Project"))
+                    {
+                        ImGui.MenuItem("New Project...");
+                        ImGui.MenuItem("Open project...");
+                        ImGui.EndMenu();
+                    }
+                    if(ImGui.BeginMenu("Import"))
+                    {
+                        
+
+                        ImGui.EndMenu();
+                    }
+                    if(ImGui.MenuItem("Settings"))
+                    {
+
+
+                        
+                    }
+                ImGui.EndMainMenuBar();
+            }
+                ImGui.PopStyleVar();
+
+            {
+                ImGui.SetNextWindowPos(new Num.Vector2(0,19), ImGuiCond.Always);
+                ImGui.SetNextWindowSize(new Num.Vector2(250,500), ImGuiCond.Always);
+                ImGui.Begin("HMMM", ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize);
+               
+  
+                ImGui.End();
+            }
+
             // 1. Show a simple window
             // Tip: if we don't call ImGui.Begin()/ImGui.End() the widgets appears in a window automatically called "Debug"
             {
+                ImGui.Begin("dawdaw");
+
                 ImGui.Text("Hello, world!");
                 ImGui.SliderFloat("float", ref f, 0.0f, 1.0f, string.Empty);
                 ImGui.ColorEdit3("clear color", ref clear_color);
@@ -95,6 +133,8 @@ namespace MonoProject
 
                 ImGui.Text("Texture sample");
                 ImGui.Image(_imGuiTexture, new Num.Vector2(300, 150), Num.Vector2.Zero, Num.Vector2.One, Num.Vector4.One, Num.Vector4.One); // Here, the previously loaded texture is used
+                ImGui.End();
+
             }
 
             // 2. Show another simple window, this time using an explicit Begin/End pair
@@ -114,23 +154,6 @@ namespace MonoProject
             }
         }
 
-		public static Texture2D CreateTexture(GraphicsDevice device, int width, int height, Func<int, Color> paint)
-		{
-			//initialize a texture
-			var texture = new Texture2D(device, width, height);
 
-			//the array holds the color for each pixel in the texture
-			Color[] data = new Color[width * height];
-			for(var pixel = 0; pixel < data.Length; pixel++)
-			{
-				//the function applies the color according to the specified pixel
-				data[pixel] = paint( pixel );
-			}
-
-			//set the color
-			texture.SetData( data );
-
-			return texture;
-		}
 	}
 }
