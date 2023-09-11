@@ -7,14 +7,16 @@ using ImGuiNET;
 using MonoProject.ImGuiComponent;
 using System.Text;
 
-namespace MonoProject
+namespace MonoProject.EngineComponents
 {
     sealed class ImGuiManager : DrawableGameComponent
     {
         private ImGuiRenderer _imGuiRenderer;
-        private byte[] ProjectName = new byte[100];
         //settings shit
+        private bool _imGuiShow = true;
         private Num.Vector3 backgroundColor = new Num.Vector3(114f / 255f, 144f / 255f, 154f / 255f);
+
+        
 
 
         //main widgets shit
@@ -25,6 +27,7 @@ namespace MonoProject
         private ImGuiSubWindow _subWindow; 
         private bool helpShow = false;
         private bool projectCreationShow = false;
+        private byte[] ProjectName = new byte[100];
         
         private Texture2D _xnaTexture;
         private IntPtr _imGuiTexture;
@@ -36,9 +39,10 @@ namespace MonoProject
         
         public override void Initialize()
         {
+            CallMainWindows();
             _mainBar = new ImGuiMainMenuBar();
             _mainInspectorWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(0,19), new Num.Vector2(300,600), "Inspector");
-            
+            _subWindow = new ImGuiSubWindow(ImGuiWindowFlags.None,Num.Vector2.Zero, Num.Vector2.Zero, null, SubWindowType.Null);
 
             _xnaTexture = ImGuiManager.CreateTexture(GraphicsDevice, 300, 150, pixel =>
 			{
@@ -49,22 +53,27 @@ namespace MonoProject
 			_imGuiTexture = _imGuiRenderer.BindTexture(_xnaTexture);
             base.Initialize();
         }
-
+         public override void Update(GameTime gameTime)
+         {
+            if(Keyboard.GetState().IsKeyDown(Keys.Tab)) _imGuiShow = false;
+            else _imGuiShow = true;
+         }
         public override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(new Color(backgroundColor.X, backgroundColor.Y, backgroundColor.Z));
             
+            if(_imGuiShow)
+            {
             _imGuiRenderer.BeforeLayout(gameTime);
-
-            _mainBar.LayoutRealize(() => Layouts.MainBarOutput(ref projectCreationShow, ref helpShow));
+            _mainBar.LayoutRealize(() => Layouts.MainBarOutput(_subWindow));
             //_mainInspectorWindow.LayoutRealize(() => Layouts.MainInspectorOutput());
             CallSubWindows();
             _imGuiRenderer.AfterLayout();
+            }
+
             
             base.Draw(gameTime);
         }
-
-
 
         private void CallMainWindows(){
 
@@ -72,15 +81,15 @@ namespace MonoProject
         //sub window shit
         private void CallSubWindows()
         {
-            if(projectCreationShow)
+            if(_subWindow.type == SubWindowType.NewProjectW)
             {
-                _subWindow = new ImGuiSubWindow(ImGuiWindowFlags.None, new Num.Vector2(800, 200), new Num.Vector2(500,800), "New project");
-                _subWindow.LayoutRealize(() => Layouts.NewProjectOutput(ref ProjectName), ref projectCreationShow);
+                _subWindow = new ImGuiSubWindow(ImGuiWindowFlags.None, new Num.Vector2(800, 200), new Num.Vector2(500,800), "New project", SubWindowType.NewProjectW);
+                _subWindow.LayoutRealize(() => Layouts.NewProjectOutput(ref ProjectName));
             }
-            if(helpShow)
+            else if(_subWindow.type == SubWindowType.HelpW)
             {
-                _subWindow = new ImGuiSubWindow(ImGuiWindowFlags.None, new Num.Vector2(800, 400), new Num.Vector2(500,100), "Help");
-                _subWindow.LayoutRealize(() => Layouts.HelpOutput(), ref helpShow);
+                _subWindow = new ImGuiSubWindow(ImGuiWindowFlags.None, new Num.Vector2(800, 400), new Num.Vector2(500,100), "Help", SubWindowType.HelpW);
+                _subWindow.LayoutRealize(() => Layouts.HelpOutput());
             }
 
         }

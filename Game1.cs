@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Num = System.Numerics;
 using ImGuiNET;
+using MonoProject.EngineComponents;
 
 namespace MonoProject
 {
