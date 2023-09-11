@@ -11,7 +11,6 @@ namespace MonoProject
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        public ImGuiRenderer _imGuiRenderer;
         private ImGuiManager _imGuiManager;
 
 
@@ -36,7 +35,7 @@ namespace MonoProject
 
         protected override void LoadContent()
         {
-
+            
             base.LoadContent();
         }
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ImGuiNET;
 
-namespace MonoProject
+namespace MonoProject.ImGuiComponent
 {
     /// <summary>
     /// ImGui renderer for use with XNA-likes (FNA & MonoGame)

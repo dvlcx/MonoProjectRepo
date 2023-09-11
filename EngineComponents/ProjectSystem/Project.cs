@@ -6,10 +6,16 @@ using System.IO;
 using Num = System.Numerics;
 using ImGuiNET;
 
+
 namespace MonoProject
 {
-    class ImGuiMainMenuBar : IImGui
+    sealed class Project
     {
-        public void LayoutRealize(Action lo) => lo();
+        String name {get; set;}
+        String path {get; set;}
+        public Project()
+        {
+            
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using ImGuiNET;
 
-namespace MonoProject
+namespace MonoProject.ImGuiComponent
 {
     public static class DrawVertDeclaration
     {
