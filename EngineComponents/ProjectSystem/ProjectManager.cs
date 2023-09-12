@@ -1,30 +1,51 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
+using System.Diagnostics;
 using System.IO;
-using Num = System.Numerics;
-using ImGuiNET;
-
 
 namespace MonoProject
 {
-    sealed class ProjectManager : GameComponent
+    static class ProjectManager
     {
         public static Project currentProject = null;
-        public ProjectManager(Game game) : base(game)
+        public static string status = "...";
+        public static void CreateProject(string path, string name)
         {
-
+            var process = new Process();
+            var startInfo = new ProcessStartInfo
+            {
+            FileName = "dotnet.exe",
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            Arguments = $"new mgdesktopgl -o {path}\\{name}"
+            };
+            process.StartInfo = startInfo;
+            process.Start();
+            status = process.StandardOutput.ReadLine()+process.StandardError.ReadLine();
+            
         }
 
-        private void LoadProject()
+        public static void LoadProject()
         {
             
             
         }
-        private void CreateProject()
+
+        public static void BuildProject()
         {
             
+            
         }
+
+        public static void RunProject()
+        {
+            
+            
+        }
+
+
+
     }
 }

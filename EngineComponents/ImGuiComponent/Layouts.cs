@@ -1,3 +1,4 @@
+using System.Text;
 using ImGuiNET;
 
 namespace MonoProject.ImGuiComponent
@@ -28,10 +29,16 @@ namespace MonoProject.ImGuiComponent
                 }
         }
 
-        public static void NewProjectOutput(ref byte[] name)
+        public static void NewProjectOutput(byte[] path, byte[] name)
         {
-            ImGui.InputText("Target folder", name, 100);
-            if (ImGui.Button("Create")); //add folder add 
+            ImGui.InputText("Target folder", path, 100);
+            ImGui.InputText("Project Name", name, 100);
+            if (ImGui.Button("Create"))
+            {
+                ProjectManager.CreateProject(Encoding.ASCII.GetString(ImGuiTools.CropByte(path)), Encoding.ASCII.GetString(ImGuiTools.CropByte(name)));
+                ProjectManager.LoadProject();
+            }  
+            ImGui.Text($"Status: \n{ProjectManager.status}".TrimEnd(':'));
         }
         public static void HelpOutput()
         {

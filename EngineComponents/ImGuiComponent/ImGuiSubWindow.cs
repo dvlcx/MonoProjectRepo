@@ -32,5 +32,6 @@ namespace MonoProject.ImGuiComponent
             type = SubWindowType.Null;
             }
         }
+
     }
 }
