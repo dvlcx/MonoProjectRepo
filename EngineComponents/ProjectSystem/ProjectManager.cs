@@ -27,7 +27,7 @@ namespace MonoProject
             
         }
 
-        public static void LoadProject()
+        public static void OpenProject()
         {
             
             

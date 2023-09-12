@@ -15,10 +15,14 @@ namespace MonoProject.ImGuiComponent;
    public static byte[] CropByte(byte[] arr)
     {
         int i = arr.Length-1;
+        if(arr[i]!=0)
+        {
         while(arr[i] == 0) --i;
+        }
         byte[] narr = new byte[i+1];
         Array.Copy(arr, narr, i+1);
         return narr;
+        
     }
     public static Texture2D CreateTexture(GraphicsDevice device, int width, int height, Func<int, Color> paint)
 		{

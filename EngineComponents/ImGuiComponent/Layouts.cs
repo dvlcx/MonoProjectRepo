@@ -36,7 +36,7 @@ namespace MonoProject.ImGuiComponent
             if (ImGui.Button("Create"))
             {
                 ProjectManager.CreateProject(Encoding.ASCII.GetString(ImGuiTools.CropByte(path)), Encoding.ASCII.GetString(ImGuiTools.CropByte(name)));
-                ProjectManager.LoadProject();
+                ProjectManager.OpenProject();
             }  
             ImGui.Text($"Status: \n{ProjectManager.status}".TrimEnd(':'));
         }
