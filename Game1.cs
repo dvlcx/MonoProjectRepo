@@ -13,7 +13,7 @@ namespace MonoProject
     {
         private GraphicsDeviceManager _graphics;
         private ImGuiManager _imGuiManager;
-
+        private EditorManager _editorManager;
 
         public Game1()
         {
@@ -27,7 +27,10 @@ namespace MonoProject
 
         protected override void Initialize()
         {
+            _editorManager = new EditorManager(this);
             _imGuiManager = new ImGuiManager(this);
+            
+            Components.Add(_editorManager);
             Components.Add(_imGuiManager);
 
 

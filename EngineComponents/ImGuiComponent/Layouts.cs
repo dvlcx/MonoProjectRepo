@@ -13,8 +13,6 @@ namespace MonoProject.ImGuiComponent
                     {
                         if(ImGui.MenuItem("New Project...")) subW.type = SubWindowType.NewProjectW;
                         ImGui.MenuItem("Open project...");
-                        ImGui.MenuItem("Save");
-                        ImGui.MenuItem("Save as...");
                         ImGui.EndMenu();
                     }
                     if(ImGui.BeginMenu("Import"))
@@ -29,6 +27,28 @@ namespace MonoProject.ImGuiComponent
                 }
         }
 
+        public static void SceneHierarchyOutput()
+        {
+            if (ImGui.Button("Add"))
+            {
+                
+            }
+            //need cycle to spawn scene objects
+            if(ImGui.TreeNode("Scene"))
+            {
+                ImGui.Selectable("ada0");
+            }
+        }
+
+        public static void GameHierarchyOutput()
+        {
+            //need cycle to spawn Controler objects
+
+        }
+        public static void InspectorOutput()
+        {   
+
+        }
         public static void NewProjectOutput(byte[] path, byte[] name)
         {
             ImGui.InputText("Target folder", path, 100);
@@ -45,12 +65,7 @@ namespace MonoProject.ImGuiComponent
               ImGui.Text("Hi!");
         }
 
-        public static void MainInspectorOutput()
-        {
 
-            
-
-        }
         
     }
 }

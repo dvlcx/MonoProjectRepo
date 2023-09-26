@@ -14,14 +14,12 @@ namespace MonoProject.EngineComponents
         private ImGuiRenderer _imGuiRenderer;
         //settings shit
         private bool _imGuiShow = true;
-        private Num.Vector3 backgroundColor = new Num.Vector3(114f / 255f, 144f / 255f, 154f / 255f);
-
-        
-
 
         //main widgets shit
         private ImGuiMainMenuBar _mainBar; //upper main menu bar
         private ImGuiMainWindow _mainInspectorWindow; //game object inspector
+        private ImGuiMainWindow _sceneHierarchyWindow; //game object inspector
+        private ImGuiMainWindow _gameHierarchyWindow; //game object inspector
 
         //sub widgets shit
         private ImGuiSubWindow _subWindow; 
@@ -39,9 +37,9 @@ namespace MonoProject.EngineComponents
         
         public override void Initialize()
         {
-            CallMainWindows();
             _mainBar = new ImGuiMainMenuBar();
             _mainInspectorWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(0,19), new Num.Vector2(300,600), "Inspector");
+            _gameHierarchyWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(0,19), new Num.Vector2(300,600), "Game Hierarchy");
             _subWindow = new ImGuiSubWindow(ImGuiWindowFlags.None,Num.Vector2.Zero, Num.Vector2.Zero, null, SubWindowType.Null);
 
             _xnaTexture = ImGuiTools.CreateTexture(GraphicsDevice, 300, 150, pixel =>
@@ -58,16 +56,17 @@ namespace MonoProject.EngineComponents
         {
             if(Keyboard.GetState().IsKeyDown(Keys.Tab)) _imGuiShow = false;
             else _imGuiShow = true;
+            base.Update(gameTime);
+
         }
 
         public override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(new Color(backgroundColor.X, backgroundColor.Y, backgroundColor.Z));
-            
+        {            
             if(_imGuiShow)
             {
             _imGuiRenderer.BeforeLayout(gameTime);
             _mainBar.LayoutRealize(() => Layouts.MainBarOutput(_subWindow));
+            _gameHierarchyWindow.LayoutRealize(() => Layouts.GameHierarchyOutput());
             //_mainInspectorWindow.LayoutRealize(() => Layouts.MainInspectorOutput());
             CallSubWindows();
             _imGuiRenderer.AfterLayout();
@@ -75,10 +74,6 @@ namespace MonoProject.EngineComponents
 
             
             base.Draw(gameTime);
-        }
-
-        private void CallMainWindows(){
-
         }
         private void CallSubWindows()
         {

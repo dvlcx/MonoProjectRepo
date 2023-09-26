@@ -5,17 +5,22 @@ using System;
 using System.IO;
 using Num = System.Numerics;
 using ImGuiNET;
+using System.Collections.Generic;
 
 
 namespace MonoProject
 {
     sealed class Project
     {
-        String name {get; set;}
-        String path {get; set;}
-        public Project()
+        string name {get; set;}
+        string path {get; set;}
+        public Project(string name, string path)
         {
-            
+            this.name = name;
+            this.path = path;
+
         }
+
+        
     }
 }
