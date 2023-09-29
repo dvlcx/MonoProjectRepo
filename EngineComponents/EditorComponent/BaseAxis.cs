@@ -6,9 +6,9 @@ using System.IO;
 
 namespace MonoProject.EditorComponent
 {
-    class AxisObject
+    class BaseAxis
     {
-        private static readonly float _axisLength = 1000;
+        private static readonly float _axisLength = 100000f;
         private readonly Vector3 _xAxisStart = new Vector3(-_axisLength, 0, 0);
         private readonly Vector3 _xAxisEnd = new Vector3(_axisLength, 0, 0);
         private readonly Vector3 _yAxisStart = new Vector3(0, -_axisLength, 0);
@@ -41,6 +41,9 @@ namespace MonoProject.EditorComponent
 
         public void Draw(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p, Matrix w)
         {
+            RasterizerState rs = new RasterizerState();
+            rs.CullMode = CullMode.None;
+            gr.RasterizerState = rs;
             effect.VertexColorEnabled = true;
             effect.View = v;
             effect.Projection = p;

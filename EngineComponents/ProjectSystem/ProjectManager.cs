@@ -24,7 +24,6 @@ namespace MonoProject
             process.StartInfo = startInfo;
             process.Start();
             status = process.StandardOutput.ReadLine()+process.StandardError.ReadLine();
-            
         }
 
         public static void OpenProject()

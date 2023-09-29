@@ -4,4 +4,5 @@ enum SubWindowType
     HelpW,
     NewProjectW,
     OpenProjectW,
+    AddFigureW
 }

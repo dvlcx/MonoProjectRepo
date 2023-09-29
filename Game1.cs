@@ -21,14 +21,14 @@ namespace MonoProject
             _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             Window.AllowUserResizing = true;
-            
+            Mouse.SetPosition( _graphics.PreferredBackBufferWidth/2, _graphics.PreferredBackBufferHeight/2);
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
             _editorManager = new EditorManager(this);
-            _imGuiManager = new ImGuiManager(this);
+            _imGuiManager = new ImGuiManager(this, _editorManager);
             
             Components.Add(_editorManager);
             Components.Add(_imGuiManager);

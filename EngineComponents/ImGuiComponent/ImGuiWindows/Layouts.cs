@@ -1,5 +1,8 @@
+using System.Numerics;
 using System.Text;
 using ImGuiNET;
+using MonoProject.EditorComponent;
+using MonoProject.EngineComponents;
 
 namespace MonoProject.ImGuiComponent
 {
@@ -27,11 +30,11 @@ namespace MonoProject.ImGuiComponent
                 }
         }
 
-        public static void SceneHierarchyOutput()
+        public static void SceneHierarchyOutput(ImGuiSubWindow subW)
         {
             if (ImGui.Button("Add"))
             {
-                
+                subW.type = SubWindowType.AddFigureW;
             }
             //need cycle to spawn scene objects
             if(ImGui.TreeNode("Scene"))
@@ -42,7 +45,7 @@ namespace MonoProject.ImGuiComponent
 
         public static void GameHierarchyOutput()
         {
-            //need cycle to spawn Controler objects
+            //need cycle to spawn Controller objects
 
         }
         public static void InspectorOutput()
@@ -59,6 +62,11 @@ namespace MonoProject.ImGuiComponent
                 ProjectManager.OpenProject();
             }  
             ImGui.Text($"Status: \n{ProjectManager.status}".TrimEnd(':'));
+        }
+
+        public static void AddFigureOutput(EditorManager em)
+        {
+            if (ImGui.Selectable("Polygon")) em.AddFigure(new PolygonFigure(new Vector3(0,2,0), 5, 3));
         }
         public static void HelpOutput()
         {

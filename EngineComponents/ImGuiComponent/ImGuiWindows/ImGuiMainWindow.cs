@@ -10,7 +10,7 @@ namespace MonoProject.ImGuiComponent
 {
     class ImGuiMainWindow : ImGuiWindow
     {
-        private const ImGuiWindowFlags CMFlags = ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize;
+        private const ImGuiWindowFlags CMFlags = ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.DockNodeHost;
         public ImGuiMainWindow(ImGuiWindowFlags flags, Num.Vector2 pos, Num.Vector2 size, String title) : base(flags, pos, size, title)
         {
             this.flags = base.flags | CMFlags;
