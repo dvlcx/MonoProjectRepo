@@ -30,7 +30,7 @@ namespace MonoProject.EditorComponent
         }
         
         //arcball move
-        private const float MOUSE_POWER = 0.02f;
+        private const float MOUSE_POWER = 0.01f;
         float yaw = -0.5f;
         float pitch = -0.5f;
         
@@ -59,20 +59,20 @@ namespace MonoProject.EditorComponent
                     Point delta = ms.Position - lastMousePosition;
                     if(delta.Y > 0)
                     {
-                        pitch += MOUSE_POWER/2;
+                        pitch -= MOUSE_POWER * delta.Y;
                     }
                     else if(delta.Y < 0)
                     {
-                        pitch -= MOUSE_POWER/2;
+                        pitch += MOUSE_POWER * -delta.Y;
                     }
                     
                     if(delta.X > 0)
                     {
-                        yaw -= MOUSE_POWER;
+                        yaw -= MOUSE_POWER * delta.X;
                     }
                     else if(delta.X < 0)
                     {
-                        yaw += MOUSE_POWER;
+                        yaw += MOUSE_POWER * -delta.X;
                     }
                 }
             }
