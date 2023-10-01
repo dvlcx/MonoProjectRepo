@@ -11,7 +11,10 @@ namespace MonoProject.EditorComponent
     {
         public PolygonFigure(Vector3 pos, int h, int w) : base(pos, h, w)
         {
-            WorldMatrix = Matrix.CreateWorld(pos, Vector3.Forward, Vector3.Up);
+            Translation = pos;
+            Rotation = Vector3.Zero;
+            Scale = new Vector3(1f, 1f, 1f);
+            WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
             SetUpVertices(h, w);
             SetUpIndeces();
         }
@@ -40,17 +43,28 @@ namespace MonoProject.EditorComponent
             base.verticesColor[1] = new VertexPositionColor(new Vector3(h/2,0,-(w/2)), Color.White);
             base.verticesColor[2] = new VertexPositionColor(new Vector3(-(h/2),0,w/2), Color.White);
             base.verticesColor[3] = new VertexPositionColor(new Vector3(-(h/2),0,-(w/2)), Color.White);
+            base.BoundingBox = new BoundingBox(Vector3.Transform(base.verticesColor[0].Position+new Vector3(0,-0.1f,0), WorldMatrix),
+            Vector3.Transform(base.verticesColor[3].Position+new Vector3(0,0.1f,0), WorldMatrix));
         }
         protected override void SetUpIndeces()
         {
-            indices = new int[6] {0, 1, 2, 0, 3, 1};
+            indices = new int[6] {0, 1, 2, 2, 3, 1};
         }
+        public override void ApplyTransform()
+        {
+            WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up) * Matrix.CreateTranslation(Translation) * Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix.CreateScale(Scale);
+            base.BoundingBox = new BoundingBox(Vector3.Transform(base.verticesColor[0].Position+new Vector3(0,-0.1f,0), WorldMatrix),
+            Vector3.Transform(base.verticesColor[3].Position+new Vector3(0,0.1f,0), WorldMatrix));
+        }
+        
         public override void ApplyTexture()
         {
             
         }
         public override void UnloadFigureContent()
-        {}
+        {
+            
+        }
         
         
 

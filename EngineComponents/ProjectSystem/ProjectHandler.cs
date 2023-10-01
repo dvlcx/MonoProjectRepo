@@ -6,7 +6,7 @@ using System.IO;
 
 namespace MonoProject
 {
-    static class ProjectManager
+    static class ProjectHandler
     {
         public static Project currentProject = null;
         public static string status = "...";

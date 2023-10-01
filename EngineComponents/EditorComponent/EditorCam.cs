@@ -49,7 +49,7 @@ namespace MonoProject.EditorComponent
         int lastScrollValue = 0;
         public void UpdatePos(KeyboardState ks, MouseState ms)
         {
-            if(ks.IsKeyDown(Keys.NumPad0)) ResetCamera();
+            if(ks.IsKeyDown(Keys.R)) ResetCamera();
             
             //camera move
             if (ms.MiddleButton == ButtonState.Pressed)
@@ -93,7 +93,7 @@ namespace MonoProject.EditorComponent
             
             //camera change apply
             pitch = MathHelper.Clamp(pitch, -1.4f, 1.4f); 
-            _cameraPos = Vector3.Transform(Vector3.Backward*CurrentZoom, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0));
+            _cameraPos = Vector3.Transform(Vector3.Backward * CurrentZoom, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0));
             _viewMatrix = Matrix.CreateLookAt(_cameraPos, _camTargStart, Vector3.Up);
 
             //prev frame info save
@@ -103,8 +103,8 @@ namespace MonoProject.EditorComponent
 
         private void ResetCamera()
         {
-            yaw = 0.5f;
-            pitch = 0.5f;
+            yaw = -0.5f;
+            pitch = -0.5f;
             CurrentZoom = 1f;
             _cameraPos = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
             _viewMatrix = Matrix.CreateLookAt(_cameraPos, _camTargStart, Vector3.Up);
@@ -125,7 +125,6 @@ namespace MonoProject.EditorComponent
             float rot = (float)Math.Atan2(direction.Y, direction.X);
             string o = $"Position (y/p): {yaw}/{pitch}\nAngle: {MathHelper.ToDegrees(rot)}\nScale: {_currentZoom}";
             return o;
-            
         }
     }
 }

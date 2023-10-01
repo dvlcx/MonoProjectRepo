@@ -47,7 +47,7 @@ namespace MonoProject.EngineComponents
             _inspectorWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(1620,19), new Num.Vector2(300, 600), "Inspector");
             _subWindow = new ImGuiSubWindow(ImGuiWindowFlags.None, Num.Vector2.Zero, Num.Vector2.Zero, null, SubWindowType.Null);
 
-            _xnaTexture = ImGuiTools.CreateTexture(GraphicsDevice, 300, 150, pixel =>
+            _xnaTexture = Tools.CreateTexture(GraphicsDevice, 300, 150, pixel =>
 			{
 				var red = (pixel % 300) / 2;
 				return new Color(red, 1, 1);
@@ -71,9 +71,9 @@ namespace MonoProject.EngineComponents
             {
             _imGuiRenderer.BeforeLayout(gameTime);
             _mainBar.LayoutRealize(() => Layouts.MainBarOutput(_subWindow));
-            _sceneHierarchyWindow.LayoutRealize(() => Layouts.SceneHierarchyOutput(_subWindow));
+            _sceneHierarchyWindow.LayoutRealize(() => Layouts.SceneHierarchyOutput(_subWindow, _editorManager.Figures));
             _gameHierarchyWindow.LayoutRealize(() => Layouts.GameHierarchyOutput());
-            _inspectorWindow.LayoutRealize(() => Layouts.InspectorOutput());
+            _inspectorWindow.LayoutRealize(() => Layouts.InspectorOutput(_editorManager.Figures));
             CallSubWindows();
             _imGuiRenderer.AfterLayout();
             }
@@ -81,6 +81,7 @@ namespace MonoProject.EngineComponents
             
             base.Draw(gameTime);
         }
+        
         private void CallSubWindows()
         {
             if(_subWindow.type == SubWindowType.AddFigureW)
