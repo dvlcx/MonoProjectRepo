@@ -74,9 +74,9 @@ namespace MonoProject.EngineComponents
             {
             _imGuiRenderer.BeforeLayout(gameTime);
             _mainBar.LayoutRealize(() => Layouts.MainBarOutput(_subWindow));
-            _sceneHierarchyWindow.LayoutRealize(() => Layouts.SceneHierarchyOutput(_subWindow, EditorManager.Figures, EditorManager.KeyboardState));
+            _sceneHierarchyWindow.LayoutRealize(() => Layouts.SceneHierarchyOutput(_subWindow));
             _gameHierarchyWindow.LayoutRealize(() => Layouts.GameHierarchyOutput());
-           // _inspectorWindow.LayoutRealize(() => Layouts.InspectorOutput(_editorManager.InspectedFig));
+            _inspectorWindow.LayoutRealize(() => Layouts.InspectorOutput());
             CallSubWindows();
             _imGuiRenderer.AfterLayout();
             }

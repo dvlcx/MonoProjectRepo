@@ -34,20 +34,20 @@ namespace MonoProject.ImGuiComponent
                 }
         }
 
-        public static void SceneHierarchyOutput(ImGuiSubWindow subW, List<IFigure> figures, KeyboardState ks)
+        public static void SceneHierarchyOutput(ImGuiSubWindow subW)
         {
             if (ImGui.Button("Add"))
             {
                 subW.type = SubWindowType.AddFigureW;
             }
             
-            foreach (var fig in figures)
+            foreach (var fig in EditorManager.Figures)
             {
                 if(ImGui.Selectable(fig.Name,  fig.IsSelected))
                 {
                     fig.IsSelected = !fig.IsSelected;
-                    if (!ks.IsKeyDown(Keys.LeftControl))
-                    foreach(var f in figures) if (f != fig && f.IsSelected)
+                    if (!EditorManager.KeyboardState.IsKeyDown(Keys.LeftControl))
+                    foreach(var f in EditorManager.Figures) if (f != fig && f.IsSelected)
                     {
                         f.IsSelected = !f.IsSelected;
                     }
@@ -66,12 +66,18 @@ namespace MonoProject.ImGuiComponent
             //need cycle to spawn Controller objects
 
         }
-
-        public static void InspectorOutput(IFigure fig)
+        
+        public static void InspectorOutput()
         {
-            if(fig == null) return;
-
-
+            if(EditorManager.Figures.Count == 0) return;
+            if(EditorManager.ListChanged) 
+            {
+                EditorManager.ListChanged = false;
+                return;
+            }
+            foreach(var fig in EditorManager.Figures) if(fig.IsSelected)
+            {
+            
             System.Numerics.Vector3 trans = Tools.ToSystemVector(fig.Translation);
             System.Numerics.Vector3 rot = Tools.ToSystemVector(fig.Rotation);
             System.Numerics.Vector3 sc = Tools.ToSystemVector(fig.Scale);
@@ -84,7 +90,7 @@ namespace MonoProject.ImGuiComponent
             fig.Rotation = Tools.ToXnaVector(rot);
             fig.Scale = Tools.ToXnaVector(sc);
             fig.ApplyTransform();
-            
+            }
         }
 
         public static void NewProjectOutput(byte[] path, byte[] name)

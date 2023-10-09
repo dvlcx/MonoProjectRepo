@@ -20,8 +20,9 @@ namespace MonoProject.EngineComponents
 
 
         public static List<IFigure> Figures;
-        public static KeyboardState KeyboardState;
-        public static MouseState MouseState;
+        public static bool ListChanged {get; set;}
+        public static KeyboardState KeyboardState {get; private set;}
+        public static MouseState MouseState {get; private set;}
 
         public EditorManager(Game game) : base (game)
         {
@@ -31,6 +32,7 @@ namespace MonoProject.EngineComponents
 
         public override void Initialize()
         {
+            ListChanged = false;
             Figures = new List<IFigure>();
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _effect = new BasicEffect(GraphicsDevice);
@@ -110,15 +112,18 @@ namespace MonoProject.EngineComponents
                 if (check && ctrlPressed) 
                 {
                     fig.IsSelected = !fig.IsSelected;
+
                     return;
                 }
                 else if(check && !ctrlPressed)
                 {
                     fig.IsSelected = true;
+
                     foreach (var f in Figures) if(f != fig) f.IsSelected = false;
                     return;
                 }
                 else fig.IsSelected = false;
+                ListChanged = true;
             }
         }
 
