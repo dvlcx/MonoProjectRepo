@@ -15,12 +15,26 @@ namespace MonoProject.EngineComponents
         private EditorCam _editorCam;
         private SpriteFont _font;
         private BaseAxis _axes;
-        
+
+
+
         public List<IFigure> Figures {get; private set;}
-        public IFigure SelectedFigure {get; set;}
+        private IFigure _inspectorFig;
+        public IFigure InspectedFig 
+        {
+            get {return _inspectorFig;} 
+            private set {
+                if(InspectedFig != value)
+                {
+                    _inspectorFig = value;
+                    IsInspectedChanged = true;
+                }
+            }
+        }
+        public static bool IsInspectedChanged = false;
         public EditorManager(Game game) : base (game)
         {
-            _game = game;
+            _game = game; 
         }
 
 
@@ -46,10 +60,18 @@ namespace MonoProject.EngineComponents
             KeyboardState ks = Keyboard.GetState();
             MouseState ms = Mouse.GetState();
             _editorCam.UpdatePos(ks, ms);
-            if(Mouse.GetState().LeftButton == ButtonState.Pressed && Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+            if(ms.LeftButton == ButtonState.Pressed && !ImGuiManager.IsSmthHovered)
             {
-                SelectFigure();
+                if(!SelectFigure()) InspectedFig = null;
             }
+            
+            if(ks.IsKeyDown(Keys.Delete) && !ImGuiManager.IsSmthFocused)
+            {
+                DeleteFigure(InspectedFig);
+                InspectedFig = null;
+            }
+            
+            foreach(var fig in Figures) if(fig.IsSelected) InspectedFig = fig;
             base.Update(gameTime);
             
         }
@@ -63,15 +85,14 @@ namespace MonoProject.EngineComponents
             _spriteBatch.Begin();
             _spriteBatch.DrawString(_font, $"{_editorCam.GetData()}", new Vector2(310,20), Color.Black);
             _spriteBatch.End();
+
             _axes.Draw(GraphicsDevice, _effect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix, Matrix.Identity);
 
             base.Draw(gameTime);
         }
         
-        public void AddFigure(IFigure fig)
-        {
-            Figures.Add(fig);
-        }
+        public void AddFigure(IFigure fig) => Figures.Add(fig);
+        public void DeleteFigure(IFigure fig) => Figures.Remove(fig);
         
         private void DrawFigures()
         {
@@ -81,7 +102,7 @@ namespace MonoProject.EngineComponents
             }
         }
 
-        private void SelectFigure()
+        private bool SelectFigure()
         {
             Point msPos = Mouse.GetState().Position;
             Vector3 rayStart = GraphicsDevice.Viewport.Unproject(new Vector3(msPos.X, msPos.Y, 0f),
@@ -101,6 +122,7 @@ namespace MonoProject.EngineComponents
                 }
                 else fig.IsSelected = false;
             }
+            return isFound;
         }
 
         private void SelectFigure(string figName)

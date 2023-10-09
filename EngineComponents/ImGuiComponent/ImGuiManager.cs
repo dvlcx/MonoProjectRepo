@@ -16,6 +16,8 @@ namespace MonoProject.EngineComponents
 
         //settings
         private bool _imGuiShow = true;
+        public static bool IsSmthHovered = false;
+        public static bool IsSmthFocused = false;
 
         //main widgets
         private ImGuiMainMenuBar _mainBar; //upper main menu bar
@@ -31,7 +33,7 @@ namespace MonoProject.EngineComponents
 
         private Texture2D _xnaTexture;
         private IntPtr _imGuiTexture;
-
+        
         public ImGuiManager(Game game, EditorManager em) : base (game)
         {
             _imGuiRenderer = new ImGuiRenderer(game);
@@ -62,7 +64,8 @@ namespace MonoProject.EngineComponents
             if(Keyboard.GetState().IsKeyDown(Keys.Tab)) _imGuiShow = false;
             else _imGuiShow = true;
             base.Update(gameTime);
-
+            IsSmthHovered = ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow) | ImGui.IsAnyItemHovered();
+            IsSmthFocused = ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow);
         }
 
         public override void Draw(GameTime gameTime)
@@ -73,7 +76,7 @@ namespace MonoProject.EngineComponents
             _mainBar.LayoutRealize(() => Layouts.MainBarOutput(_subWindow));
             _sceneHierarchyWindow.LayoutRealize(() => Layouts.SceneHierarchyOutput(_subWindow, _editorManager.Figures));
             _gameHierarchyWindow.LayoutRealize(() => Layouts.GameHierarchyOutput());
-            _inspectorWindow.LayoutRealize(() => Layouts.InspectorOutput(_editorManager.Figures));
+            _inspectorWindow.LayoutRealize(() => Layouts.InspectorOutput(_editorManager.InspectedFig));
             CallSubWindows();
             _imGuiRenderer.AfterLayout();
             }

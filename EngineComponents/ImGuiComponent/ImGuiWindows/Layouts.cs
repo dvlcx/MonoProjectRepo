@@ -6,6 +6,7 @@ using MonoProject.EngineComponents;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Diagnostics.Metrics;
+using MonoProject.EngineComponents;
 namespace MonoProject.ImGuiComponent
 {
     static class Layouts
@@ -39,14 +40,16 @@ namespace MonoProject.ImGuiComponent
                 subW.type = SubWindowType.AddFigureW;
             }
             
-            int counter = 0;
             foreach (var fig in figures)
             {
-                if(ImGui.Selectable("Polfog " + counter,  fig.IsSelected))
+                if(ImGui.Selectable(fig.Name,  fig.IsSelected))
                 {
                     fig.IsSelected = !fig.IsSelected;
+                    foreach(var f in figures) if (f != fig && f.IsSelected)
+                    {
+                        f.IsSelected = !f.IsSelected;
+                    }
                 }
-                counter++;
             }
 
             //need cycle to spawn scene objects
@@ -61,25 +64,19 @@ namespace MonoProject.ImGuiComponent
             //need cycle to spawn Controller objects
 
         }
-        private static System.Numerics.Vector3 trans = System.Numerics.Vector3.Zero;
-        private static System.Numerics.Vector3 rot = System.Numerics.Vector3.Zero;
-        private static System.Numerics.Vector3 sc = new System.Numerics.Vector3(1f, 1f, 1f);
-        private static IFigure fig = null;
-        public static void InspectorOutput(List<IFigure> figures)
-        {   
-            foreach (var f in figures)
-            {
-                if(f.IsSelected == true && f != fig) 
-                {
-                    fig = f;
-                    break;
-                }
-            }
-            if (fig == null) return;
 
-            trans = Tools.ToSystemVector(fig.Translation);
-            rot = Tools.ToSystemVector(fig.Rotation);
-            sc = Tools.ToSystemVector(fig.Scale);
+        public static void InspectorOutput(IFigure fig)
+        {
+            if(fig == null) return;
+            if(EditorManager.IsInspectedChanged)
+            {
+                EditorManager.IsInspectedChanged = false;
+                return;
+            }
+
+            System.Numerics.Vector3 trans = Tools.ToSystemVector(fig.Translation);
+            System.Numerics.Vector3 rot = Tools.ToSystemVector(fig.Rotation);
+            System.Numerics.Vector3 sc = Tools.ToSystemVector(fig.Scale);
             
             ImGui.InputFloat3("Translate", ref trans);
             ImGui.InputFloat3("Rotate", ref rot);

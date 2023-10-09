@@ -4,19 +4,23 @@ using Microsoft.Xna.Framework.Input;
 using MonoProject.ImGuiComponent;
 using System;
 using System.IO;
+using System.Text;
 
 namespace MonoProject.EditorComponent
 {
     public class PolygonFigure : BasicFigure
     {
+        private static int _counter = 0;
         public PolygonFigure(Vector3 pos, int h, int w) : base(pos, h, w)
         {
+            Name = "Polygon" + _counter;
             Translation = pos;
             Rotation = Vector3.Zero;
             Scale = new Vector3(1f, 1f, 1f);
             WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
             SetUpVertices(h, w);
             SetUpIndeces();
+            _counter++;
         }
         public override void LoadFigureContent()
         {

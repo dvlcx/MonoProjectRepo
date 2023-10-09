@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ImGuiNET;
+using System.Threading.Tasks;
 
 namespace MonoProject.ImGuiComponent
 {
@@ -218,7 +219,7 @@ namespace MonoProject.ImGuiComponent
                 imguikey = ImGuiKey.None;
                 return true;
             }
-
+        
             imguikey = key switch
             {
                 Keys.Back => ImGuiKey.Backspace,
@@ -249,9 +250,9 @@ namespace MonoProject.ImGuiComponent
                 >= Keys.F1 and <= Keys.F12 => ImGuiKey.F1 + (key - Keys.F1),
                 Keys.NumLock => ImGuiKey.NumLock,
                 Keys.Scroll => ImGuiKey.ScrollLock,
-                Keys.LeftShift or Keys.RightShift => ImGuiKey.ModShift,
-                Keys.LeftControl or Keys.RightControl => ImGuiKey.ModCtrl,
-                Keys.LeftAlt or Keys.RightAlt => ImGuiKey.ModAlt,
+                Keys.LeftShift => ImGuiKey.ModShift,
+                Keys.LeftControl => ImGuiKey.ModCtrl,
+                Keys.LeftAlt => ImGuiKey.ModAlt,
                 Keys.OemSemicolon => ImGuiKey.Semicolon,
                 Keys.OemPlus => ImGuiKey.Equal,
                 Keys.OemComma => ImGuiKey.Comma,
