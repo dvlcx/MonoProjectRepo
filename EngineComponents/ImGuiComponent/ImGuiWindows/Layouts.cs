@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Diagnostics.Metrics;
 using MonoProject.EngineComponents;
+using Microsoft.Xna.Framework.Input;
 namespace MonoProject.ImGuiComponent
 {
     static class Layouts
@@ -33,7 +34,7 @@ namespace MonoProject.ImGuiComponent
                 }
         }
 
-        public static void SceneHierarchyOutput(ImGuiSubWindow subW, List<IFigure> figures)
+        public static void SceneHierarchyOutput(ImGuiSubWindow subW, List<IFigure> figures, KeyboardState ks)
         {
             if (ImGui.Button("Add"))
             {
@@ -45,6 +46,7 @@ namespace MonoProject.ImGuiComponent
                 if(ImGui.Selectable(fig.Name,  fig.IsSelected))
                 {
                     fig.IsSelected = !fig.IsSelected;
+                    if (!ks.IsKeyDown(Keys.LeftControl))
                     foreach(var f in figures) if (f != fig && f.IsSelected)
                     {
                         f.IsSelected = !f.IsSelected;
@@ -68,11 +70,7 @@ namespace MonoProject.ImGuiComponent
         public static void InspectorOutput(IFigure fig)
         {
             if(fig == null) return;
-            if(EditorManager.IsInspectedChanged)
-            {
-                EditorManager.IsInspectedChanged = false;
-                return;
-            }
+
 
             System.Numerics.Vector3 trans = Tools.ToSystemVector(fig.Translation);
             System.Numerics.Vector3 rot = Tools.ToSystemVector(fig.Rotation);

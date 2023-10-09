@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,20 +19,10 @@ namespace MonoProject.EngineComponents
 
 
 
-        public List<IFigure> Figures {get; private set;}
-        private IFigure _inspectorFig;
-        public IFigure InspectedFig 
-        {
-            get {return _inspectorFig;} 
-            private set {
-                if(InspectedFig != value)
-                {
-                    _inspectorFig = value;
-                    IsInspectedChanged = true;
-                }
-            }
-        }
-        public static bool IsInspectedChanged = false;
+        public static List<IFigure> Figures;
+        public static KeyboardState KeyboardState;
+        public static MouseState MouseState;
+
         public EditorManager(Game game) : base (game)
         {
             _game = game; 
@@ -54,26 +45,25 @@ namespace MonoProject.EngineComponents
             _font = _game.Content.Load<SpriteFont>("Content//font");
             base.LoadContent();
         }
-
+        private ButtonState _leftButtonLast = new ButtonState();
         public override void Update(GameTime gameTime)
         {
-            KeyboardState ks = Keyboard.GetState();
-            MouseState ms = Mouse.GetState();
-            _editorCam.UpdatePos(ks, ms);
-            if(ms.LeftButton == ButtonState.Pressed && !ImGuiManager.IsSmthHovered)
+            KeyboardState = Keyboard.GetState();
+            MouseState = Mouse.GetState();
+            
+            _editorCam.UpdatePos(KeyboardState, MouseState);
+            if(MouseState.LeftButton == ButtonState.Pressed && MouseState.LeftButton != _leftButtonLast && !ImGuiManager.IsSmthHovered)
             {
-                if(!SelectFigure()) InspectedFig = null;
+                SelectFigure(KeyboardState.IsKeyDown(Keys.LeftControl));
             }
             
-            if(ks.IsKeyDown(Keys.Delete) && !ImGuiManager.IsSmthFocused)
+            if(KeyboardState.IsKeyDown(Keys.Delete) && !ImGuiManager.IsSmthFocused)
             {
-                DeleteFigure(InspectedFig);
-                InspectedFig = null;
+                DeleteFigure();
             }
             
-            foreach(var fig in Figures) if(fig.IsSelected) InspectedFig = fig;
             base.Update(gameTime);
-            
+            _leftButtonLast = MouseState.LeftButton;
         }
 
         public override void Draw(GameTime gameTime)
@@ -92,8 +82,10 @@ namespace MonoProject.EngineComponents
         }
         
         public void AddFigure(IFigure fig) => Figures.Add(fig);
-        public void DeleteFigure(IFigure fig) => Figures.Remove(fig);
-        
+        public void DeleteFigure() 
+        {
+            foreach (var fig in Figures) if (fig.IsSelected) Figures.Remove(fig);
+        }
         private void DrawFigures()
         {
             foreach (var fig in Figures)
@@ -102,27 +94,32 @@ namespace MonoProject.EngineComponents
             }
         }
 
-        private bool SelectFigure()
+        private void SelectFigure(bool ctrlPressed)
         {
-            Point msPos = Mouse.GetState().Position;
-            Vector3 rayStart = GraphicsDevice.Viewport.Unproject(new Vector3(msPos.X, msPos.Y, 0f),
+            Point MouseStatePos = Mouse.GetState().Position;
+            Vector3 rayStart = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0f),
              _editorCam.ProjectionMatrix, _editorCam.ViewMatrix, Matrix.Identity);
-            Vector3 rayEnd = GraphicsDevice.Viewport.Unproject(new Vector3(msPos.X, msPos.Y, 0.1f),
+            Vector3 rayEnd = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0.1f),
              _editorCam.ProjectionMatrix, _editorCam.ViewMatrix, Matrix.Identity);
             Vector3 dir = rayEnd - rayStart;
             dir.Normalize();
             Ray selectRay = new Ray(rayStart, dir);
-            bool isFound = false;
             foreach (var fig in Figures)
             {
-                if (selectRay.Intersects(fig.BoundingBox) > 0f && !isFound) 
+                bool check = selectRay.Intersects(fig.BoundingBox) > 0f;
+                if (check && ctrlPressed) 
+                {
+                    fig.IsSelected = !fig.IsSelected;
+                    return;
+                }
+                else if(check && !ctrlPressed)
                 {
                     fig.IsSelected = true;
-                    isFound = true;
+                    foreach (var f in Figures) if(f != fig) f.IsSelected = false;
+                    return;
                 }
                 else fig.IsSelected = false;
             }
-            return isFound;
         }
 
         private void SelectFigure(string figName)
