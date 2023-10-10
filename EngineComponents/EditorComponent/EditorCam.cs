@@ -35,13 +35,13 @@ namespace MonoProject.EditorComponent
         float pitch = -0.5f;
         
         private readonly Vector3 _camTargStart = Vector3.Zero;
-        private Vector3 _cameraPos;
+        public Vector3 CameraPos {get; private set;}
         
         public EditorCam(float aspr)
         {
-            _cameraPos = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
+            CameraPos = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
 
-            _viewMatrix = Matrix.CreateLookAt(_cameraPos, _camTargStart, Vector3.Up);
+            _viewMatrix = Matrix.CreateLookAt(CameraPos, _camTargStart, Vector3.Up);
             _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspr,  0.0001f, float.MaxValue);
         }
 
@@ -93,8 +93,8 @@ namespace MonoProject.EditorComponent
             
             //camera change apply
             pitch = MathHelper.Clamp(pitch, -1.4f, 1.4f); 
-            _cameraPos = Vector3.Transform(Vector3.Backward * CurrentZoom, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0));
-            _viewMatrix = Matrix.CreateLookAt(_cameraPos, _camTargStart, Vector3.Up);
+            CameraPos = Vector3.Transform(Vector3.Backward * CurrentZoom, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0));
+            _viewMatrix = Matrix.CreateLookAt(CameraPos, _camTargStart, Vector3.Up);
 
             //prev frame info save
             lastScrollValue = ms.ScrollWheelValue;
@@ -106,8 +106,8 @@ namespace MonoProject.EditorComponent
             yaw = -0.5f;
             pitch = -0.5f;
             CurrentZoom = 1f;
-            _cameraPos = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
-            _viewMatrix = Matrix.CreateLookAt(_cameraPos, _camTargStart, Vector3.Up);
+            CameraPos = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
+            _viewMatrix = Matrix.CreateLookAt(CameraPos, _camTargStart, Vector3.Up);
         }
         
         private void UpdateCam(float CurrentZoom, float yaw, float pitch)
@@ -123,7 +123,7 @@ namespace MonoProject.EditorComponent
             _viewMatrix.Decompose(out sc,out r,out tr);
             Vector3 direction = Vector3.Transform(Vector3.UnitX, r);
             float rot = (float)Math.Atan2(direction.Y, direction.X);
-            string o = $"Position (y/p): {yaw}/{pitch}\nAngle: {MathHelper.ToDegrees(rot)}\nScale: {_currentZoom}";
+            string o = $"Position (y/p): {CameraPos}\nAngle: {MathHelper.ToDegrees(rot)}\nScale: {_currentZoom}";
             return o;
         }
     }

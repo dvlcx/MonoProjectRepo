@@ -65,7 +65,7 @@ namespace MonoProject.EngineComponents
             else _imGuiShow = true;
             base.Update(gameTime);
             IsSmthHovered = ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow) | ImGui.IsAnyItemHovered();
-            IsSmthFocused = ImGui.IsWindowFocused(ImGuiFocusedFlags.AnyWindow);
+            IsSmthFocused = ImGui.IsAnyItemActive();
         }
 
         public override void Draw(GameTime gameTime)

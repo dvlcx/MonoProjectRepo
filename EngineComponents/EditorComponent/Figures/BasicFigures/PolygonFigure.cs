@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MonoProject.EditorComponent
 {
-    public class PolygonFigure : BasicFigure
+    public class PolygonFigure : BasicFigure, IFigure
     {
         private static int _counter = 0;
         public PolygonFigure(Vector3 pos, int h, int w) : base(pos, h, w)
@@ -56,11 +56,18 @@ namespace MonoProject.EditorComponent
         }
         public override void ApplyTransform()
         {
-            WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up) * Matrix.CreateTranslation(Translation) * Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix.CreateScale(Scale);
+            WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up) * Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix.CreateTranslation(Translation) * Matrix.CreateScale(Scale);
             base.BoundingBox = new BoundingBox(Vector3.Transform(base.verticesColor[0].Position+new Vector3(0,-0.1f,0), WorldMatrix),
             Vector3.Transform(base.verticesColor[3].Position+new Vector3(0,0.1f,0), WorldMatrix));
         }
-        
+        public override void ApplyColor(Color c)
+        {
+            for (int i = 0; i < verticesColor.GetLength(0); i++)
+            {
+                verticesColor[i].Color = c;
+            }
+        }
+
         public override void ApplyTexture()
         {
             

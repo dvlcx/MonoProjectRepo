@@ -75,9 +75,10 @@ namespace MonoProject.ImGuiComponent
                 EditorManager.ListChanged = false;
                 return;
             }
+
             foreach(var fig in EditorManager.Figures) if(fig.IsSelected)
             {
-            
+
             System.Numerics.Vector3 trans = Tools.ToSystemVector(fig.Translation);
             System.Numerics.Vector3 rot = Tools.ToSystemVector(fig.Rotation);
             System.Numerics.Vector3 sc = Tools.ToSystemVector(fig.Scale);

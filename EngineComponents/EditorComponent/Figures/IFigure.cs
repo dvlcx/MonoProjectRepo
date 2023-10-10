@@ -15,6 +15,7 @@ namespace MonoProject.EditorComponent
         void LoadFigureContent();
         void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p, Matrix w);
         void ApplyTransform();
+        void ApplyColor(Color c);
         void UnloadFigureContent();
     }
 }

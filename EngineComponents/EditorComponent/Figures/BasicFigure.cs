@@ -7,7 +7,7 @@ using System.IO;
 
 namespace MonoProject.EditorComponent
 {
-    public abstract class BasicFigure : IFigure
+    public abstract class BasicFigure 
     {
         public String Name {get; set;}
         public Vector3 Translation {get; set;}
@@ -35,6 +35,7 @@ namespace MonoProject.EditorComponent
         protected abstract void SetUpVertices(int h, int w);
         protected abstract void SetUpIndeces();
         public abstract void ApplyTransform();
+        public abstract void ApplyColor(Color c);
         public abstract void ApplyTexture();
         public abstract void UnloadFigureContent();
     }

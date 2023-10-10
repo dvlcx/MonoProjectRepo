@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -59,7 +61,7 @@ namespace MonoProject.EngineComponents
                 SelectFigure(KeyboardState.IsKeyDown(Keys.LeftControl));
             }
             
-            if(KeyboardState.IsKeyDown(Keys.Delete) && !ImGuiManager.IsSmthFocused)
+            if(KeyboardState.IsKeyDown(Keys.Delete) && (!ImGuiManager.IsSmthFocused ))
             {
                 DeleteFigure();
             }
@@ -82,11 +84,15 @@ namespace MonoProject.EngineComponents
 
             base.Draw(gameTime);
         }
-        
+
+
         public void AddFigure(IFigure fig) => Figures.Add(fig);
         public void DeleteFigure() 
         {
-            foreach (var fig in Figures) if (fig.IsSelected) Figures.Remove(fig);
+            for (int i = 0; i < Figures.Count; i++) if(Figures[i].IsSelected)
+            {
+                Figures.Remove(Figures[i]);
+            }
         }
         private void DrawFigures()
         {
@@ -96,40 +102,73 @@ namespace MonoProject.EngineComponents
             }
         }
 
+        private delegate void ActionRef<T>(ref T item);
         private void SelectFigure(bool ctrlPressed)
         {
             Point MouseStatePos = Mouse.GetState().Position;
             Vector3 rayStart = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0f),
              _editorCam.ProjectionMatrix, _editorCam.ViewMatrix, Matrix.Identity);
-            Vector3 rayEnd = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0.1f),
+            Vector3 rayEnd = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0.08f),
              _editorCam.ProjectionMatrix, _editorCam.ViewMatrix, Matrix.Identity);
             Vector3 dir = rayEnd - rayStart;
             dir.Normalize();
             Ray selectRay = new Ray(rayStart, dir);
+   
+            int intersections = 0;
+            float d = 1000;
+            IFigure closest = Figures[0];
+            IFigure soloSelect = Figures[0];
+
+            ActionRef<IFigure> a = null;
             foreach (var fig in Figures)
             {
                 bool check = selectRay.Intersects(fig.BoundingBox) > 0f;
+                if(check && d > Vector3.Distance(fig.Translation, _editorCam.CameraPos))
+                {
+                    d = Vector3.Distance(fig.Translation, _editorCam.CameraPos);
+                    closest = fig;
+                }
+
                 if (check && ctrlPressed) 
                 {
-                    fig.IsSelected = !fig.IsSelected;
-
-                    return;
+                    intersections++;
+                    soloSelect = fig;
+                    a = (ref IFigure fi) => fi.IsSelected = !fi.IsSelected;
                 }
                 else if(check && !ctrlPressed)
                 {
-                    fig.IsSelected = true;
-
-                    foreach (var f in Figures) if(f != fig) f.IsSelected = false;
-                    return;
+                    intersections++;
+                    soloSelect = fig;
+                    a = (ref IFigure fi) => 
+                    {
+                        fi.IsSelected = true;
+                        foreach (var f in Figures) if(f != fi)
+                        {
+                            f.IsSelected = false;
+                        }
+                    };
                 }
-                else fig.IsSelected = false;
+                else if(!check && ctrlPressed) 
+                {
+                    continue;
+                }
+                else if(!check && !ctrlPressed) foreach (var f in Figures)
+                {
+                    f.IsSelected = false;
+                }
+            }
+            ListChanged = true;
+
+            if(intersections > 1)
+            {
+                a.Invoke(ref closest);
+                ListChanged = true;
+            }  
+            else if(intersections == 1)
+            {
+                a.Invoke(ref soloSelect);
                 ListChanged = true;
             }
-        }
-
-        private void SelectFigure(string figName)
-        {
-            
         }
 
 
