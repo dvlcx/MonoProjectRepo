@@ -108,16 +108,16 @@ namespace MonoProject.EngineComponents
             Point MouseStatePos = Mouse.GetState().Position;
             Vector3 rayStart = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0f),
              _editorCam.ProjectionMatrix, _editorCam.ViewMatrix, Matrix.Identity);
-            Vector3 rayEnd = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0.08f),
+            Vector3 rayEnd = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0.9f),
              _editorCam.ProjectionMatrix, _editorCam.ViewMatrix, Matrix.Identity);
             Vector3 dir = rayEnd - rayStart;
             dir.Normalize();
             Ray selectRay = new Ray(rayStart, dir);
    
             int intersections = 0;
-            float d = 1000;
-            IFigure closest = Figures[0];
-            IFigure soloSelect = Figures[0];
+            float d = 10000;
+            IFigure closest = null;
+            IFigure soloSelect = null;
 
             ActionRef<IFigure> a = null;
             foreach (var fig in Figures)

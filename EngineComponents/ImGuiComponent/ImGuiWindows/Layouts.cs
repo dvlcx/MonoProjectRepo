@@ -75,22 +75,34 @@ namespace MonoProject.ImGuiComponent
                 EditorManager.ListChanged = false;
                 return;
             }
-
+            System.Numerics.Vector3 trans = System.Numerics.Vector3.Zero;
+            System.Numerics.Vector3 rot = System.Numerics.Vector3.Zero;
+            System.Numerics.Vector3 sc = new System.Numerics.Vector3(1f);
+            int c = 0;
             foreach(var fig in EditorManager.Figures) if(fig.IsSelected)
             {
-
-            System.Numerics.Vector3 trans = Tools.ToSystemVector(fig.Translation);
-            System.Numerics.Vector3 rot = Tools.ToSystemVector(fig.Rotation);
-            System.Numerics.Vector3 sc = Tools.ToSystemVector(fig.Scale);
-            
-            ImGui.InputFloat3("Translate", ref trans);
-            ImGui.InputFloat3("Rotate", ref rot);
-            ImGui.InputFloat3("Scale", ref sc);
-
-            fig.Translation = Tools.ToXnaVector(trans);
-            fig.Rotation = Tools.ToXnaVector(rot);
-            fig.Scale = Tools.ToXnaVector(sc);
-            fig.ApplyTransform();
+                c++;
+                trans += Tools.ToSystemVector(fig.Translation); 
+                rot = Tools.ToSystemVector(fig.Rotation); 
+                sc = Tools.ToSystemVector(fig.Scale); 
+            }
+            trans /= c;
+            System.Numerics.Vector3 transOrigin = trans;
+            System.Numerics.Vector3 rotOrigin = rot;
+            System.Numerics.Vector3 scOrigin = sc;
+            if(c != 0) 
+            {
+                ImGui.InputFloat3("Translate", ref trans);
+                ImGui.InputFloat3("Rotate", ref rot);
+                ImGui.InputFloat3("Scale", ref sc);
+            }
+            else return;
+            foreach(var fig in EditorManager.Figures) if(fig.IsSelected)
+            {
+                fig.Translation += Tools.ToXnaVector(trans) - Tools.ToXnaVector(transOrigin);
+                fig.Rotation += Tools.ToXnaVector(rot) - Tools.ToXnaVector(rotOrigin);
+                fig.Scale += Tools.ToXnaVector(sc) - Tools.ToXnaVector(scOrigin);
+                fig.ApplyTransform();
             }
         }
 
