@@ -4,12 +4,14 @@ using ImGuiNET;
 using MonoProject.EditorComponent;
 using MonoProject.EngineComponents;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using System.Diagnostics.Metrics;
-using MonoProject.EngineComponents;
+using System.Linq;
 using Microsoft.Xna.Framework.Input;
+using System;
+
+
 namespace MonoProject.ImGuiComponent
 {
+    
     static class Layouts
     {
         public static void MainBarOutput(ImGuiSubWindow subW)
@@ -70,40 +72,54 @@ namespace MonoProject.ImGuiComponent
         public static void InspectorOutput()
         {
             if(EditorManager.Figures.Count == 0) return;
-            if(EditorManager.ListChanged) 
+            List<IFigure> selectedFigs = EditorManager.Figures.Where(fig => fig.IsSelected).ToList();
+            if (selectedFigs.Count == 0) return;
+            if (EditorManager.ListChanged) 
             {
                 EditorManager.ListChanged = false;
                 return;
             }
+
+            byte[] name = new byte[100];
             System.Numerics.Vector3 trans = System.Numerics.Vector3.Zero;
             System.Numerics.Vector3 rot = System.Numerics.Vector3.Zero;
             System.Numerics.Vector3 sc = new System.Numerics.Vector3(1f);
-            int c = 0;
-            foreach(var fig in EditorManager.Figures) if(fig.IsSelected)
-            {
-                c++;
+            System.Numerics.Vector3 color = System.Numerics.Vector3.Zero;
+
+            selectedFigs.ForEach(fig => {
                 trans += Tools.ToSystemVector(fig.Translation); 
                 rot = Tools.ToSystemVector(fig.Rotation); 
                 sc = Tools.ToSystemVector(fig.Scale); 
-            }
-            trans /= c;
+                color = Tools.ToSystemVector(fig.Color.ToVector3());
+            });
+            if(selectedFigs.Count == 1) Encoding.ASCII.GetBytes(selectedFigs[0].Name).CopyTo(name, 0);
+
+            trans /= selectedFigs.Count;
+            byte[] nameOrigin = new byte[100];
+            name.CopyTo(nameOrigin, 0);
             System.Numerics.Vector3 transOrigin = trans;
             System.Numerics.Vector3 rotOrigin = rot;
             System.Numerics.Vector3 scOrigin = sc;
-            if(c != 0) 
-            {
-                ImGui.InputFloat3("Translate", ref trans);
-                ImGui.InputFloat3("Rotate", ref rot);
-                ImGui.InputFloat3("Scale", ref sc);
-            }
-            else return;
-            foreach(var fig in EditorManager.Figures) if(fig.IsSelected)
+            System.Numerics.Vector3 colorOrigin = color;
+
+            if(selectedFigs.Count == 1) ImGui.InputText("Name", name, 100);
+            ImGui.DragFloat3("Translate", ref trans, 0.01f);
+            ImGui.DragFloat3("Rotate", ref rot, 0.01f);
+            ImGui.DragFloat3("Scale", ref sc, 0.01f);
+            ImGui.ColorEdit3("Color", ref color);
+
+            if(trans!=transOrigin || rot!=rotOrigin || sc!=scOrigin)
+            foreach(var fig in selectedFigs)
             {
                 fig.Translation += Tools.ToXnaVector(trans) - Tools.ToXnaVector(transOrigin);
                 fig.Rotation += Tools.ToXnaVector(rot) - Tools.ToXnaVector(rotOrigin);
                 fig.Scale += Tools.ToXnaVector(sc) - Tools.ToXnaVector(scOrigin);
                 fig.ApplyTransform();
             }
+
+            if(color != colorOrigin) foreach (var fig2 in selectedFigs) fig2.ApplyColor(new Microsoft.Xna.Framework.Color(color.X, color.Y, color.Z));
+            
+            if(!name.SequenceEqual(nameOrigin)) selectedFigs[0].Name = Encoding.ASCII.GetString(Tools.CropByte(name));
         }
 
         public static void NewProjectOutput(byte[] path, byte[] name)
@@ -120,7 +136,7 @@ namespace MonoProject.ImGuiComponent
 
         public static void AddFigureOutput(EditorManager em)
         {
-            if (ImGui.Selectable("Polygon")) em.AddFigure(new PolygonFigure(new Microsoft.Xna.Framework.Vector3(0, 0, 0), 5, 3));
+            if (ImGui.Selectable("Polygon")) em.AddFigure(new PolygonFigure(new Microsoft.Xna.Framework.Vector3(0, 0, 0), 2, 2));
         }
         public static void HelpOutput()
         {

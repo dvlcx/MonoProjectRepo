@@ -3,11 +3,11 @@
   <SourceFile>D:/MonoProject/Content/font.spritefont</SourceFile>
   <SourceTime>2020-08-10T19:17:28+03:00</SourceTime>
   <DestFile>D:/MonoProject/Content/bin/DesktopGL/Content/font.xnb</DestFile>
-  <DestTime>2023-09-26T23:46:15.6610575+03:00</DestTime>
+  <DestTime>2023-10-23T14:28:10.0451827+03:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
-  <ImporterTime>2022-07-26T14:44:56+03:00</ImporterTime>
+  <ImporterTime>2023-03-19T22:06:30+02:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>
-  <ProcessorTime>2022-07-26T14:44:56+03:00</ProcessorTime>
+  <ProcessorTime>2023-03-19T22:06:30+02:00</ProcessorTime>
   <Parameters>
     <Key>PremultiplyAlpha</Key>
     <Value>True</Value>

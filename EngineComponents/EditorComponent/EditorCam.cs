@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoProject.ImGuiComponent;
+using MonoProject.EngineComponents;
 using System;
-using System.IO;
+
 
 namespace MonoProject.EditorComponent
 {
@@ -26,37 +26,42 @@ namespace MonoProject.EditorComponent
         private float CurrentZoom
         {
             get {return _currentZoom;}
-            set {_currentZoom = MathHelper.Clamp(value, 4f, 20f);}
+            set {_currentZoom = MathHelper.Clamp(value, 1f, 20f);}
         }
         
         //arcball move
         private const float MOUSE_POWER = 0.01f;
-        float yaw = -0.5f;
-        float pitch = -0.5f;
+        float yaw = 0.5f;
+        float pitch = 0.5f;
         
-        private readonly Vector3 _camTargStart = Vector3.Zero;
+        private readonly Vector3 _camTargStart;
+        private readonly Vector3 _camPosStart;
         public Vector3 CameraPos {get; private set;}
+        public Vector3 CameraTarget {get; private set;}
+        
         
         public EditorCam(float aspr)
         {
-            CameraPos = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
-
-            _viewMatrix = Matrix.CreateLookAt(CameraPos, _camTargStart, Vector3.Up);
+            _camPosStart = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
+            _camTargStart = Vector3.Zero;
+            CameraPos = _camPosStart;
+            CameraTarget = _camTargStart;
+            _viewMatrix = Matrix.CreateLookAt(CameraPos, CameraTarget, Vector3.Up);
             _projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, aspr,  0.0001f, float.MaxValue);
         }
 
-        Point lastMousePosition;
-        int lastScrollValue = 0;
+        private Point _lastMousePosition;
+        private int _lastScrollValue = 0;
         public void UpdatePos(KeyboardState ks, MouseState ms)
         {
-            if(ks.IsKeyDown(Keys.R)) ResetCamera();
+            if(ks.IsKeyDown(Keys.R) && !ImGuiManager.IsSmthFocused) ResetCamera();
             
             //camera move
             if (ms.MiddleButton == ButtonState.Pressed)
             {
-                if(lastMousePosition != ms.Position)
+                if(_lastMousePosition != ms.Position)
                 {
-                    Point delta = ms.Position - lastMousePosition;
+                    Point delta = ms.Position - _lastMousePosition;
                     if(delta.Y > 0)
                     {
                         pitch -= MOUSE_POWER * delta.Y;
@@ -77,42 +82,37 @@ namespace MonoProject.EditorComponent
                 }
             }
 
-            
-
-            //zooming
-            if(ms.ScrollWheelValue > lastScrollValue)
+            if(ms.ScrollWheelValue > _lastScrollValue)
             {   
                 CurrentZoom += ZOOM_POWER;
 
             }
-            else if(ms.ScrollWheelValue < lastScrollValue)
+            else if(ms.ScrollWheelValue < _lastScrollValue)
             {
                 CurrentZoom -= ZOOM_POWER;
 
             }
-            
-            //camera change apply
-            pitch = MathHelper.Clamp(pitch, -1.4f, 1.4f); 
-            CameraPos = Vector3.Transform(Vector3.Backward * CurrentZoom, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0));
-            _viewMatrix = Matrix.CreateLookAt(CameraPos, _camTargStart, Vector3.Up);
 
-            //prev frame info save
-            lastScrollValue = ms.ScrollWheelValue;
-            lastMousePosition = ms.Position;
+            pitch = MathHelper.Clamp(pitch, -1.4f, 1.4f); 
+            CameraPos = Vector3.Transform(Vector3.Forward * CurrentZoom, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0)) + CameraTarget;
+            _viewMatrix = Matrix.CreateLookAt(CameraPos, CameraTarget, Vector3.Up);
+
+            _lastScrollValue = ms.ScrollWheelValue;
+            _lastMousePosition = ms.Position;
         }
 
         private void ResetCamera()
         {
-            yaw = -0.5f;
-            pitch = -0.5f;
-            CurrentZoom = 1f;
+            yaw = 0.5f;
+            pitch = 0.5f;
+            CurrentZoom = 5f;
             CameraPos = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(yaw, pitch, 0f));
-            _viewMatrix = Matrix.CreateLookAt(CameraPos, _camTargStart, Vector3.Up);
+            _viewMatrix = Matrix.CreateLookAt(_camPosStart, _camTargStart, Vector3.Up);
         }
         
-        private void UpdateCam(float CurrentZoom, float yaw, float pitch)
+        public void ChangeFocus(Vector3 nt)
         {
-
+            CameraTarget = nt;
         }
         
         public string GetData()

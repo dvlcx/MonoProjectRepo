@@ -5,8 +5,10 @@
   <Config />
   <SourceFiles>
     <File>D:/MonoProject/Content/font.spritefont</File>
+    <File>D:/MonoProject/Content/SolidWireframe.fx</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>
 </SourceFileCollection>

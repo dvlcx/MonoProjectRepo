@@ -9,11 +9,13 @@ namespace MonoProject.EditorComponent
         public Vector3 Translation {get; set;}
         public Vector3 Rotation {get; set;}
         public Vector3 Scale {get; set;}
+        public Color Color{get; set;}
         virtual public Matrix WorldMatrix {get {return WorldMatrix;} protected set {WorldMatrix = value;}}
-        virtual public BoundingBox BoundingBox {get {return BoundingBox;} protected set {BoundingBox = value;}}
+        virtual public BoundingOrientedBox OBoundingBox {get {return OBoundingBox;} protected set {OBoundingBox = value;}}
         public bool IsSelected {get; set;}
         void LoadFigureContent();
-        void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p, Matrix w);
+        void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p);
+        void DrawFigure(GraphicsDevice gr, Effect effect, Matrix v, Matrix p);
         void ApplyTransform();
         void ApplyColor(Color c);
         void UnloadFigureContent();

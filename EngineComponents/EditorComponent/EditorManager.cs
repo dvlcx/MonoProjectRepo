@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ImGuiNET;
@@ -14,7 +15,8 @@ namespace MonoProject.EngineComponents
     {
         private Game _game;
         private SpriteBatch _spriteBatch;
-        private BasicEffect _effect;
+        private BasicEffect _basicEffect;
+        private Effect _selectedEffect;
         private EditorCam _editorCam;
         private SpriteFont _font;
         private BaseAxis _axes;
@@ -37,7 +39,6 @@ namespace MonoProject.EngineComponents
             ListChanged = false;
             Figures = new List<IFigure>();
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _effect = new BasicEffect(GraphicsDevice);
             _editorCam = new EditorCam(GraphicsDevice.Viewport.AspectRatio);
             _axes = new BaseAxis();
             _axes.Initialize(GraphicsDevice);
@@ -47,8 +48,11 @@ namespace MonoProject.EngineComponents
         protected override void LoadContent()
         {
             _font = _game.Content.Load<SpriteFont>("Content//font");
+            _basicEffect = new BasicEffect(GraphicsDevice);
+          _selectedEffect = _game.Content.Load<Effect>("Content//SolidWireframe");
             base.LoadContent();
         }
+
         private ButtonState _leftButtonLast = new ButtonState();
         public override void Update(GameTime gameTime)
         {
@@ -56,14 +60,29 @@ namespace MonoProject.EngineComponents
             MouseState = Mouse.GetState();
             
             _editorCam.UpdatePos(KeyboardState, MouseState);
-            if(MouseState.LeftButton == ButtonState.Pressed && MouseState.LeftButton != _leftButtonLast && !ImGuiManager.IsSmthHovered)
+            if (Figures.Count == 0) return;
+
+            if(MouseState.LeftButton == ButtonState.Pressed && MouseState.LeftButton != _leftButtonLast &&
+             !ImGuiManager.IsSmthHovered && !ImGuiManager.IsSmthFocused)
             {
                 SelectFigure(KeyboardState.IsKeyDown(Keys.LeftControl));
             }
-            
-            if(KeyboardState.IsKeyDown(Keys.Delete) && (!ImGuiManager.IsSmthFocused ))
+            if(KeyboardState.IsKeyDown(Keys.LeftControl) && KeyboardState.IsKeyDown(Keys.A) && !ImGuiManager.IsSmthFocused)
             {
-                DeleteFigure();
+                foreach (var fig in Figures) fig.IsSelected = true;
+            }
+            List<IFigure> selectedFigures = Figures.Where(fig => fig.IsSelected).ToList();
+            if (selectedFigures.Count == 0) return;
+            if(KeyboardState.IsKeyDown(Keys.F) && !ImGuiManager.IsSmthFocused)
+            {
+                Vector3 newPos = Vector3.Zero;
+                foreach(var fig in selectedFigures) newPos += fig.Translation;
+                newPos /= selectedFigures.Count;
+                _editorCam.ChangeFocus(newPos);
+            }
+            if(KeyboardState.IsKeyDown(Keys.Delete) && !ImGuiManager.IsSmthFocused)
+            {
+                DeleteFigure(selectedFigures);
             }
             
             base.Update(gameTime);
@@ -73,39 +92,30 @@ namespace MonoProject.EngineComponents
         public override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             DrawFigures();
 
             _spriteBatch.Begin();
             _spriteBatch.DrawString(_font, $"{_editorCam.GetData()}", new Vector2(310,20), Color.Black);
             _spriteBatch.End();
 
-            _axes.Draw(GraphicsDevice, _effect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix, Matrix.Identity);
+            _axes.Draw(GraphicsDevice, _basicEffect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix, Matrix.Identity);
 
             base.Draw(gameTime);
         }
 
-
         public void AddFigure(IFigure fig) => Figures.Add(fig);
-        public void DeleteFigure() 
-        {
-            for (int i = 0; i < Figures.Count; i++) if(Figures[i].IsSelected)
-            {
-                Figures.Remove(Figures[i]);
-            }
-        }
+        public void DeleteFigure(List<IFigure> figs) => Figures = Figures.Except(figs).ToList();
+
         private void DrawFigures()
         {
-            foreach (var fig in Figures)
-            {
-                fig.DrawFigure(GraphicsDevice, _effect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix, fig.WorldMatrix);
-            }
+            foreach (var fig in Figures) fig.DrawFigure(GraphicsDevice, _selectedEffect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix);
         }
 
         private delegate void ActionRef<T>(ref T item);
         private void SelectFigure(bool ctrlPressed)
         {
-            Point MouseStatePos = Mouse.GetState().Position;
+            Point MouseStatePos = Mouse.GetState().Position;    
             Vector3 rayStart = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0f),
              _editorCam.ProjectionMatrix, _editorCam.ViewMatrix, Matrix.Identity);
             Vector3 rayEnd = GraphicsDevice.Viewport.Unproject(new Vector3(MouseStatePos.X, MouseStatePos.Y, 0.9f),
@@ -122,7 +132,7 @@ namespace MonoProject.EngineComponents
             ActionRef<IFigure> a = null;
             foreach (var fig in Figures)
             {
-                bool check = selectRay.Intersects(fig.BoundingBox) > 0f;
+                bool check = fig.OBoundingBox.Intersects(ref selectRay) > 0f;
                 if(check && d > Vector3.Distance(fig.Translation, _editorCam.CameraPos))
                 {
                     d = Vector3.Distance(fig.Translation, _editorCam.CameraPos);
@@ -148,14 +158,8 @@ namespace MonoProject.EngineComponents
                         }
                     };
                 }
-                else if(!check && ctrlPressed) 
-                {
-                    continue;
-                }
-                else if(!check && !ctrlPressed) foreach (var f in Figures)
-                {
-                    f.IsSelected = false;
-                }
+                else if(!check && ctrlPressed) continue;
+                else if(!check && !ctrlPressed) foreach (var f in Figures) f.IsSelected = false;
             }
             ListChanged = true;
 

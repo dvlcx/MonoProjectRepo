@@ -13,8 +13,9 @@ namespace MonoProject.EditorComponent
         public Vector3 Translation {get; set;}
         public Vector3 Rotation {get; set;}
         public Vector3 Scale {get; set;}
+        public Color Color {get; set;}
         public Matrix WorldMatrix {get; protected set;}
-        public BoundingBox BoundingBox {get; protected set;}
+        public BoundingOrientedBox OBoundingBox {get; protected set;}
         public bool IsSelected {get; set;}
         protected Vector3 position;
         protected int vertexCount;
@@ -31,7 +32,8 @@ namespace MonoProject.EditorComponent
 
 
         public abstract void LoadFigureContent();
-        public abstract void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p, Matrix w);
+        public abstract void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p);
+        public abstract void DrawFigure(GraphicsDevice gr, Effect effect, Matrix v, Matrix p);
         protected abstract void SetUpVertices(int h, int w);
         protected abstract void SetUpIndeces();
         public abstract void ApplyTransform();

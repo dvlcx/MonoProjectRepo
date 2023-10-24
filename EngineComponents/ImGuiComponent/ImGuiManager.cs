@@ -63,9 +63,9 @@ namespace MonoProject.EngineComponents
         {
             if(Keyboard.GetState().IsKeyDown(Keys.Tab)) _imGuiShow = false;
             else _imGuiShow = true;
+            IsSmthHovered = ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow | ImGuiHoveredFlags.AllowWhenBlockedByPopup) | ImGui.IsAnyItemHovered();
+            IsSmthFocused = ImGui.IsAnyItemActive() ;
             base.Update(gameTime);
-            IsSmthHovered = ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow) | ImGui.IsAnyItemHovered();
-            IsSmthFocused = ImGui.IsAnyItemActive();
         }
 
         public override void Draw(GameTime gameTime)
