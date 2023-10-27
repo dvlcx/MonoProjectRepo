@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -49,7 +45,7 @@ namespace MonoProject.EngineComponents
         {
             _font = _game.Content.Load<SpriteFont>("Content//font");
             _basicEffect = new BasicEffect(GraphicsDevice);
-          _selectedEffect = _game.Content.Load<Effect>("Content//SolidWireframe");
+            _selectedEffect = _game.Content.Load<Effect>("Content//SolidWireframe");
             base.LoadContent();
         }
 
@@ -161,8 +157,7 @@ namespace MonoProject.EngineComponents
                 else if(!check && ctrlPressed) continue;
                 else if(!check && !ctrlPressed) foreach (var f in Figures) f.IsSelected = false;
             }
-            ListChanged = true;
-
+            
             if(intersections > 1)
             {
                 a.Invoke(ref closest);

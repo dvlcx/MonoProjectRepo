@@ -4,13 +4,13 @@ using ImGuiNET;
 
 namespace MonoProject.ImGuiComponent
 {
-    abstract class ImGuiWindow : IImGui
+    abstract class ImGuiWindow
     {
+        protected delegate void Layout();
         protected ImGuiWindowFlags flags;
         protected Num.Vector2 pos;
         protected Num.Vector2 size;
         protected String title;
-
         public ImGuiWindow(ImGuiWindowFlags flags, Num.Vector2 pos, Num.Vector2 size, String title)
         {
             this.flags = flags;
@@ -19,6 +19,6 @@ namespace MonoProject.ImGuiComponent
             this.title = title;
         }
 
-        public abstract void LayoutRealize(Action lo);      
+        public abstract void LayoutRealize(); 
     }
 }

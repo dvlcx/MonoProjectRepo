@@ -14,6 +14,7 @@ namespace MonoProject.EditorComponent
         public Vector3 Rotation {get; set;}
         public Vector3 Scale {get; set;}
         public Color Color {get; set;}
+
         public Matrix WorldMatrix {get; protected set;}
         public BoundingOrientedBox OBoundingBox {get; protected set;}
         public bool IsSelected {get; set;}

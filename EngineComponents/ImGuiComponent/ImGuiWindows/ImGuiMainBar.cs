@@ -4,8 +4,12 @@ using System;
 
 namespace MonoProject.ImGuiComponent
 {
-    class ImGuiMainMenuBar : IImGui
+    class ImGuiMainMenuBar
     {
-        public void LayoutRealize(Action lo) => lo();
+        public Action LayoutRealize {get; private set;}
+        public ImGuiMainMenuBar(Action lo)
+        {
+            LayoutRealize = lo;
+        }
     }
 }

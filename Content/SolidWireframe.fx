@@ -74,6 +74,8 @@ technique ColorEffect
         PixelShader = compile PS_SHADERMODEL MainPS();
         FillMode = Solid;
         CullMode = NONE;
+
+
     }
 	pass Pass1
     {
@@ -81,5 +83,6 @@ technique ColorEffect
         PixelShader = compile PS_SHADERMODEL WirePS();
         FillMode = WIREFRAME;
         CullMode = NONE;
+
     }
 }

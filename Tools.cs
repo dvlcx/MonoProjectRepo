@@ -14,16 +14,22 @@ namespace MonoProject;
    
     public static byte[] CropByte(byte[] arr)
     {
+        if (arr.Length == 0) return arr;
         int i = arr.Length-1;
-        if(arr[i]!=0)
+        if(arr[i] == 0)
         {
-        while(arr[i] == 0) --i;
+            while(arr[i] == 0)
+            { 
+                --i;
+                if(i < 0) return new byte[0];
+            }
+            
         }
         byte[] narr = new byte[i+1];
         Array.Copy(arr, narr, i+1);
         return narr;
-        
     }
+
     public static Texture2D CreateTexture(GraphicsDevice device, int width, int height, Func<int, Color> paint)
 	{
 		var texture = new Texture2D(device, width, height);

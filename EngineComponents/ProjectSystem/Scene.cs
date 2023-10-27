@@ -10,15 +10,13 @@ using System.Collections.Generic;
 
 namespace MonoProject
 {
-    sealed class Project
+    sealed class Scene 
     {
         public string Name {get; private set;}
-        public string Path {get; private set;}
         
-        public Project(string name, string path)
+        public Scene(string name, string path)
         {
             this.Name = name;
-            this.Path = path;
         }
 
         

@@ -1,3 +1,4 @@
+using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,24 +10,33 @@ namespace MonoProject
     static class ProjectHandler
     {
         public static Project currentProject = null;
-        public static string status = "...";
-        public static void CreateProject(string path, string name)
+        public static void CreateProject(string path, string name, out string status)
         {
-            var process = new Process();
-            var startInfo = new ProcessStartInfo
+            if(!Directory.Exists(path)) 
             {
-            FileName = "dotnet.exe",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            Arguments = $"new mgdesktopgl -o {path}\\{name}"
+                status = "There is no such folder!";
+                return;
+            }
+            else if(name == "") 
+            {
+                status = "Empty name!";
+                return;
+            }
+            
+            Process process = new Process();
+            process.StartInfo  = new ProcessStartInfo
+            {
+                FileName = "dotnet.exe",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                Arguments = $"new mgdesktopgl -o {path}\\{name}"
             };
-            process.StartInfo = startInfo;
             process.Start();
-            status = process.StandardOutput.ReadLine()+process.StandardError.ReadLine();
+            status = process.StandardOutput.ReadLine() + process.StandardError.ReadLine();
         }
 
-        public static void OpenProject()
+        public static void OpenProject(string path)
         {
             
             

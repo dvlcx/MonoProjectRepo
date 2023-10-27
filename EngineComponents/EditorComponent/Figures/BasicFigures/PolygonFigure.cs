@@ -11,6 +11,7 @@ namespace MonoProject.EditorComponent
 {
     public class PolygonFigure : BasicFigure, IFigure
     {
+        public Texture2D Texture {get; private set;}
         private static int _counter = 0;
         public PolygonFigure(Vector3 pos, int h, int w) : base(pos, h, w)
         {
@@ -24,10 +25,12 @@ namespace MonoProject.EditorComponent
             SetUpIndeces();
             _counter++;
         }
+
         public override void LoadFigureContent()
         {
             
         }
+
         public override void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p)
         {
             effect.View = v;
@@ -46,27 +49,25 @@ namespace MonoProject.EditorComponent
             effect.Parameters["View"].SetValue(v);
             effect.Parameters["Projection"].SetValue(p);
             effect.Parameters["World"].SetValue(WorldMatrix);
-            //effect.Parameters["Color"].SetValue(Color.Black.ToVector4());
             
             //pray for geometry shader support in future
-            if (!IsSelected) 
+            if (IsSelected) 
+            {
+                foreach (var pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
+                    indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
+                }
+            }
+            else 
             {
                 effect.CurrentTechnique.Passes[0].Apply();
                 gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
                  indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
             }
-            else 
-            {
-            foreach (var pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
-                indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
-            }
-            }
-
-
         }
+
         private Vector3 _halfExtentStart;
         protected override void SetUpVertices(int h, int w)
         {
