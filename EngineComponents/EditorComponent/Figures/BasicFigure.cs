@@ -25,17 +25,17 @@ namespace MonoProject.EditorComponent
         protected VertexPositionTexture[] verticesText;
         protected VertexBuffer vertexBuffer;
         
-        protected BasicFigure(Vector3 pos, int h, int w)
+        protected BasicFigure(Vector3 pos)
         {
             position = pos;
-            SetUpVertices(h, w);
+            SetUpVertices();
         }
 
 
         public abstract void LoadFigureContent();
         public abstract void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p);
         public abstract void DrawFigure(GraphicsDevice gr, Effect effect, Matrix v, Matrix p);
-        protected abstract void SetUpVertices(int h, int w);
+        protected abstract void SetUpVertices();
         protected abstract void SetUpIndeces();
         public abstract void ApplyTransform();
         public abstract void ApplyColor(Color c);

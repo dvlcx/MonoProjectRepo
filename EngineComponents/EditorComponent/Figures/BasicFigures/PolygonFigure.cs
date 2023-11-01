@@ -13,7 +13,7 @@ namespace MonoProject.EditorComponent
     {
         public Texture2D Texture {get; private set;}
         private static int _counter = 0;
-        public PolygonFigure(Vector3 pos, int h, int w) : base(pos, h, w)
+        public PolygonFigure(Vector3 pos) : base(pos)
         {
             base.Name = "Polygon" + _counter;
             base.Translation = pos;
@@ -21,7 +21,8 @@ namespace MonoProject.EditorComponent
             base.Scale = new Vector3(1f, 1f, 1f);
             base.Color = Color.White;
             WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
-            SetUpVertices(h, w);
+            SetUpVertices();
+            SetUpBoundingBox();
             SetUpIndeces();
             _counter++;
         }
@@ -69,13 +70,16 @@ namespace MonoProject.EditorComponent
         }
 
         private Vector3 _halfExtentStart;
-        protected override void SetUpVertices(int h, int w)
+        protected override void SetUpVertices()
         {
             base.verticesColor = new VertexPositionColor[4];
-            base.verticesColor[0] = new VertexPositionColor(new Vector3(h/2,0,w/2), base.Color);
-            base.verticesColor[1] = new VertexPositionColor(new Vector3(h/2,0,-(w/2)), base.Color);
-            base.verticesColor[2] = new VertexPositionColor(new Vector3(-(h/2),0,w/2), base.Color);
-            base.verticesColor[3] = new VertexPositionColor(new Vector3(-(h/2),0,-(w/2)), base.Color);
+            base.verticesColor[0] = new VertexPositionColor(new Vector3(1f/2f,0,1f/2f), base.Color);
+            base.verticesColor[1] = new VertexPositionColor(new Vector3(1f/2f,0,-(1f/2f)), base.Color);
+            base.verticesColor[2] = new VertexPositionColor(new Vector3(-(1f/2f),0,1f/2f), base.Color);
+            base.verticesColor[3] = new VertexPositionColor(new Vector3(-(1f/2f),0,-(1f/2f)), base.Color);
+        }
+        private void SetUpBoundingBox()
+        {
             BoundingBox bb = new BoundingBox(Vector3.Transform(base.verticesColor[0].Position+new Vector3(0, -0.1f, 0), WorldMatrix),
             Vector3.Transform(base.verticesColor[3].Position+new Vector3(0, 0.1f, 0), WorldMatrix));
             OBoundingBox = BoundingOrientedBox.CreateFromBoundingBox(bb);

@@ -23,6 +23,7 @@ namespace MonoProject
             Window.AllowUserResizing = true;
             Mouse.SetPosition( _graphics.PreferredBackBufferWidth/2, _graphics.PreferredBackBufferHeight/2);
             IsMouseVisible = true;
+            Window.Title = ProjectHandler.currentProject?.Name;
         }
 
         protected override void Initialize()
@@ -45,7 +46,7 @@ namespace MonoProject
 
         protected override void Update(GameTime gameTime)
         {
-
+            Window.Title = ProjectHandler.currentProject?.Name;
             base.Update(gameTime);
         }
 

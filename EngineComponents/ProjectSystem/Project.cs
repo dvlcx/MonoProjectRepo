@@ -10,11 +10,19 @@ using System.Collections.Generic;
 
 namespace MonoProject
 {
-    sealed class Project
+    [Serializable]
+    public sealed class Projects
     {
-        public string Name {get; private set;}
-        public string Path {get; private set;}
+        public List<Project> ProjectList {get; set;} = new List<Project>();
+    }
+
+    [Serializable]
+    public sealed class Project
+    {
+        public string Name {get; set;}
+        public string Path {get; set;}
         
+        public Project(){}
         public Project(string name, string path)
         {
             this.Name = name;

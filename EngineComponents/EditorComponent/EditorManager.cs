@@ -100,8 +100,8 @@ namespace MonoProject.EngineComponents
             base.Draw(gameTime);
         }
 
-        public void AddFigure(IFigure fig) => Figures.Add(fig);
-        public void DeleteFigure(List<IFigure> figs) => Figures = Figures.Except(figs).ToList();
+        public static void AddFigure(IFigure fig) => Figures.Add(fig);
+        public static void DeleteFigure(List<IFigure> figs) => Figures = Figures.Except(figs).ToList();
 
         private void DrawFigures()
         {

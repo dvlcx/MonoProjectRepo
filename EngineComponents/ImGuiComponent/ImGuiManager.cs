@@ -25,6 +25,7 @@ namespace MonoProject.EngineComponents
 
         //main widgets
         private ImGuiMainMenuBar _mainBar; //upper main menu bar
+        private ImGuiMainWindow _startWindow;
         private ImGuiMainWindow _inspectorWindow; //game object inspector (for transform)
         private ImGuiMainWindow _sceneHierarchyWindow; //scene inspector (node tree of scene objects)
         private ImGuiMainWindow _gameHierarchyWindow; //game inspector (node tree of scenes)
@@ -46,6 +47,8 @@ namespace MonoProject.EngineComponents
         
         public override void Initialize()
         {
+            _startWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(800,300), new Num.Vector2(200,100),
+             "Start", () => StartOutput());
             _mainBar = new ImGuiMainMenuBar(() => MainBarOutput(_subWindow));
             _sceneHierarchyWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(0,19), new Num.Vector2(200, 800),
              "Scene Objects", () => SceneHierarchyOutput(_subWindow));
@@ -68,6 +71,7 @@ namespace MonoProject.EngineComponents
         {
             if(Keyboard.GetState().IsKeyDown(Keys.Tab)) _imGuiShow = false;
             else _imGuiShow = true;
+
             IsSmthHovered = ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow | ImGuiHoveredFlags.AllowWhenBlockedByPopup) | ImGui.IsAnyItemHovered();
             IsSmthFocused = ImGui.IsAnyItemActive();
             if(_subWindow != null) IsAnySubWindowActive = true;
@@ -76,24 +80,60 @@ namespace MonoProject.EngineComponents
 
         public override void Draw(GameTime gameTime)
         {            
-            if(_imGuiShow)
+            if(ProjectHandler.currentProject == null)
             {
-            _imGuiRenderer.BeforeLayout(gameTime);
-            _mainBar.LayoutRealize();
-            _sceneHierarchyWindow.LayoutRealize();
-            _gameHierarchyWindow.LayoutRealize();
-            _inspectorWindow.LayoutRealize();
-            if(_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
-            else _subWindow?.LayoutRealize();
-
-            _imGuiRenderer.AfterLayout();
+                _imGuiShow = true;
+                _imGuiRenderer.BeforeLayout(gameTime);
+                _startWindow.LayoutRealize();
+                 if(_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
+                else _subWindow?.LayoutRealize();
+                _imGuiRenderer.AfterLayout();
+                return;
             }
 
-            
+            if (_imGuiShow)
+            {
+                _imGuiRenderer.BeforeLayout(gameTime);
+                _mainBar.LayoutRealize();
+                _sceneHierarchyWindow.LayoutRealize();
+                _gameHierarchyWindow.LayoutRealize();
+                _inspectorWindow.LayoutRealize();
+                if (_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
+                else _subWindow?.LayoutRealize();
+
+                _imGuiRenderer.AfterLayout();
+            }
+
+
             base.Draw(gameTime);
         }
 
         #region MainControls
+        private void StartOutput()
+        {
+            if(ImGui.Button("New Project")) ChangeSubWindow(SubWindowType.NewProjectW);
+            Projects projects = null;
+            projects = ProjectHandler.DeserializeProjects();
+            if(projects == null) return;
+            foreach (var p in projects.ProjectList) if(ImGui.Selectable(p.Name)) ProjectHandler.OpenProject(p.Path, p.Name);
+            
+            //read file
+            /*
+                <projectlist>
+                    <project>
+                        <name>imgay</name>
+                        <path>poamfaefpaffa/adadadadw</path>
+                    </project>
+                    <project>
+                        <name>imgay</name>
+                        <path>poamfaefpaffa/adadadadw</path>
+                    </project>
+                <projectlist>
+
+                spawn selectables
+                foreach selectable - open project with path + name params
+            */
+        }
         private void MainBarOutput(ImGuiSubWindow subW)
         {
             ImGui.BeginMainMenuBar();
@@ -196,7 +236,7 @@ namespace MonoProject.EngineComponents
             
             if(!name.SequenceEqual(nameOrigin)) selectedFigs[0].Name = Encoding.ASCII.GetString(Tools.CropByte(name));
         }
-        private void GameHierarchyOutput()
+        private static void GameHierarchyOutput()
         {
             //need cycle to spawn Controller objects
 
@@ -234,13 +274,13 @@ namespace MonoProject.EngineComponents
             }  
             ImGui.Text($"Status: \n{_status}".TrimEnd(':'));
         } 
-        private void AddFigureOutput(EditorManager em)
+        private static void AddFigureOutput(EditorManager em)
         {
-            if (ImGui.Selectable("Polygon")) em.AddFigure(new PolygonFigure(new Microsoft.Xna.Framework.Vector3(0, 0, 0), 2, 2));
+            if (ImGui.Selectable("Polygon")) EditorManager.AddFigure(new PolygonFigure(new Vector3(0, 0, 0)));
         }
     
     
-        private void HelpOutput()
+        private static void HelpOutput()
         {
               ImGui.Text("Hi!");
         }

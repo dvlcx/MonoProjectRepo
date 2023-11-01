@@ -21,7 +21,7 @@ namespace MonoProject;
             while(arr[i] == 0)
             { 
                 --i;
-                if(i < 0) return new byte[0];
+                if(i < 0) return Array.Empty<byte>();
             }
             
         }

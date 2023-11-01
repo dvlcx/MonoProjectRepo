@@ -209,7 +209,7 @@ namespace MonoProject.ImGuiComponent
             io.DisplayFramebufferScale = new System.Numerics.Vector2(1f, 1f);
         }
 
-        private bool TryMapKeys(Keys key, out ImGuiKey imguikey)
+        private static bool TryMapKeys(Keys key, out ImGuiKey imguikey)
         {
             //Special case not handed in the switch...
             //If the actual key we put in is "None", return none and true. 
