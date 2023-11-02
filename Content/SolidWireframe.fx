@@ -63,7 +63,14 @@ float4 WirePS(VertexShaderOutput input) : COLOR0
     return invertedColor;
 }
 
-
+VertexShaderOutput DotVS(in VertexShaderInput input)
+{
+    VertexShaderOutput output = (VertexShaderOutput)0;
+    output.Position =  mul(mul(mul(input.Position, World), View), Projection);
+    output.Position *= 10;
+    output.Color = input.Color;
+    return output;
+}
 
 // Technique and passes within the technique
 technique ColorEffect
@@ -72,10 +79,8 @@ technique ColorEffect
     {
         VertexShader = compile VS_SHADERMODEL MainVS();
         PixelShader = compile PS_SHADERMODEL MainPS();
-        FillMode = Solid;
+        FillMode = SOLID;
         CullMode = NONE;
-
-
     }
 	pass Pass1
     {
@@ -83,6 +88,5 @@ technique ColorEffect
         PixelShader = compile PS_SHADERMODEL WirePS();
         FillMode = WIREFRAME;
         CullMode = NONE;
-
     }
 }

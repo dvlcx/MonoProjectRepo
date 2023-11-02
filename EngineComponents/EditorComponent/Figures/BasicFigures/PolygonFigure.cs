@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoProject.EngineComponents;
 using MonoProject.ImGuiComponent;
 using System;
 using System.Diagnostics;
@@ -11,6 +12,8 @@ namespace MonoProject.EditorComponent
 {
     public class PolygonFigure : BasicFigure, IFigure
     {
+        public float Length {get; private set;}
+        public float Width  {get; private set;}
         public Texture2D Texture {get; private set;}
         private static int _counter = 0;
         public PolygonFigure(Vector3 pos) : base(pos)
@@ -60,13 +63,58 @@ namespace MonoProject.EditorComponent
                     gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
                     indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
                 }
+                if(EditorManager.IsPointEditMode)
+                {
+                    foreach(var i in indices)
+                    {
+                        DrawVertexCircle(gr, verticesColor[i].Position);
+                    }
+                }
             }
             else 
             {
                 effect.CurrentTechnique.Passes[0].Apply();
-                gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
+                gr.DrawUserIndexedPrimitives(PrimitiveType.PointList, verticesColor, 0, verticesColor.Length,
                  indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
             }
+        }
+        private void DrawVertexCircle(GraphicsDevice gr, Vector3 pos)
+        {
+            int radius = 10;
+            Texture2D texture = new Texture2D(gr, radius, radius);
+            Color[] colorData = new Color[radius*radius];
+
+            float diam = radius / 2f;
+            float diamsq = diam * diam;
+
+            for (int x = 0; x < radius; x++)
+            {
+                for (int y = 0; y < radius; y++)
+                {
+                    int index = x * radius + y;
+                    Vector2 posi = new Vector2(x - diam, y - diam);
+                    if (pos.LengthSquared() <= diamsq)
+                    {
+                        colorData[index] = Color.White;
+                    }
+                    else
+                    {
+                        colorData[index] = Color.Transparent;
+                    }
+                }
+            }
+
+            texture.SetData(colorData);
+
+            VertexPositionTexture[] verts = new VertexPositionTexture[4];
+            int[] inds = new int[6];
+            verts[0] = new VertexPositionTexture(new Vector3(1f/2f,0,1f/2f), new Vector2(1, 1));
+            verts[1] = new VertexPositionTexture(new Vector3(1f/2f,0,-(1f/2f)), new Vector2(0, -1));
+            verts[2] = new VertexPositionTexture(new Vector3(-(1f/2f),0,1f/2f), new Vector2(-1, 0));
+            verts[3] = new VertexPositionTexture(new Vector3(-(1f/2f),0,-(1f/2f)), new Vector2(-1, -1));
+            gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verts, 0, inds.Length,
+                    indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
+            
         }
 
         private Vector3 _halfExtentStart;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>D:/MonoProject/Content/SolidWireframe.fx</SourceFile>
-  <SourceTime>2023-10-25T20:56:14.4353001+03:00</SourceTime>
+  <SourceTime>2023-11-02T07:45:02.6355881+03:00</SourceTime>
   <DestFile>D:/MonoProject/Content/bin/DesktopGL/Content/SolidWireframe.xnb</DestFile>
-  <DestTime>2023-10-25T20:56:18.7366534+03:00</DestTime>
+  <DestTime>2023-11-02T07:47:39.1622663+03:00</DestTime>
   <Importer>EffectImporter</Importer>
   <ImporterTime>2022-07-26T14:44:56+03:00</ImporterTime>
   <Processor>EffectProcessor</Processor>

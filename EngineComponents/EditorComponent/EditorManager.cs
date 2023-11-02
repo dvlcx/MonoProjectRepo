@@ -10,6 +10,7 @@ namespace MonoProject.EngineComponents
     class EditorManager : DrawableGameComponent
     {
         private Game _game;
+        public static bool IsPointEditMode {get; private set;} = false;
         private SpriteBatch _spriteBatch;
         private BasicEffect _basicEffect;
         private Effect _selectedEffect;
