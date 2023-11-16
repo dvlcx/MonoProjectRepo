@@ -20,7 +20,7 @@ namespace MonoProject.EditorComponent
         public bool IsSelected {get; set;}
         protected Vector3 position;
         protected int vertexCount;
-        protected int[] indices;
+        protected int[] _indices;
         protected VertexPositionColor[] verticesColor;
         protected VertexPositionTexture[] verticesText;
         protected VertexBuffer vertexBuffer;

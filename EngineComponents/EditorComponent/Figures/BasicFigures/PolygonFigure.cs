@@ -12,8 +12,8 @@ namespace MonoProject.EditorComponent
 {
     public class PolygonFigure : BasicFigure, IFigure
     {
-        public float Length {get; private set;}
-        public float Width  {get; private set;}
+        public int Length {get; private set;} = 2;
+        public int Width  {get; private set;} = 1;
         public Texture2D Texture {get; private set;}
         private static int _counter = 0;
         public PolygonFigure(Vector3 pos) : base(pos)
@@ -45,7 +45,7 @@ namespace MonoProject.EditorComponent
                 pass.Apply();
             }
             gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
-             indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
+             _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
         }
 
         public override void DrawFigure(GraphicsDevice gr, Effect effect, Matrix v, Matrix p)
@@ -61,11 +61,11 @@ namespace MonoProject.EditorComponent
                 {
                     pass.Apply();
                     gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
-                    indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
+                    _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
                 }
                 if(EditorManager.IsPointEditMode)
                 {
-                    foreach(var i in indices)
+                    foreach(var i in _indices)
                     {
                         DrawVertexCircle(gr, verticesColor[i].Position);
                     }
@@ -74,8 +74,8 @@ namespace MonoProject.EditorComponent
             else 
             {
                 effect.CurrentTechnique.Passes[0].Apply();
-                gr.DrawUserIndexedPrimitives(PrimitiveType.PointList, verticesColor, 0, verticesColor.Length,
-                 indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
+                gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
+                 _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
             }
         }
         private void DrawVertexCircle(GraphicsDevice gr, Vector3 pos)
@@ -113,7 +113,7 @@ namespace MonoProject.EditorComponent
             verts[2] = new VertexPositionTexture(new Vector3(-(1f/2f),0,1f/2f), new Vector2(-1, 0));
             verts[3] = new VertexPositionTexture(new Vector3(-(1f/2f),0,-(1f/2f)), new Vector2(-1, -1));
             gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verts, 0, inds.Length,
-                    indices, 0, indices.Length/3, VertexPositionColor.VertexDeclaration);
+                    _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
             
         }
 
@@ -121,26 +121,68 @@ namespace MonoProject.EditorComponent
         protected override void SetUpVertices()
         {
             base.verticesColor = new VertexPositionColor[4];
-            base.verticesColor[0] = new VertexPositionColor(new Vector3(1f/2f,0,1f/2f), base.Color);
-            base.verticesColor[1] = new VertexPositionColor(new Vector3(1f/2f,0,-(1f/2f)), base.Color);
-            base.verticesColor[2] = new VertexPositionColor(new Vector3(-(1f/2f),0,1f/2f), base.Color);
-            base.verticesColor[3] = new VertexPositionColor(new Vector3(-(1f/2f),0,-(1f/2f)), base.Color);
+            base.verticesColor[0] = new VertexPositionColor(new Vector3(1f/2f, 0, 1f/2f), base.Color);
+            base.verticesColor[1] = new VertexPositionColor(new Vector3(1f/2f, 0, -(1f/2f)), base.Color);
+            base.verticesColor[2] = new VertexPositionColor(new Vector3(-(1f/2f), 0, 1f/2f), base.Color);
+            base.verticesColor[3] = new VertexPositionColor(new Vector3(-(1f/2f), 0, -(1f/2f)), base.Color);
+            
+            base.verticesColor = new VertexPositionColor[(Length + 1) * (Width + 1)];
+            float shiftX = 0.5f * Width;
+            float shiftZ = 0.5f * Length;
+
+            int counter = 0;
+            for (int z = 0; z < Length + 1; z++)
+            {
+                for (int x = 0; x < Width + 1; x++)
+                {
+                verticesColor[counter].Position = new Vector3(x, 0, -z);                    
+                verticesColor[counter].Color = Color;
+                verticesColor[counter].Position.X -= shiftX;
+                verticesColor[counter].Position.Z += shiftZ;
+
+                    counter++;
+                }
+            }
+        
         }
         private void SetUpBoundingBox()
         {
             BoundingBox bb = new BoundingBox(Vector3.Transform(base.verticesColor[0].Position+new Vector3(0, -0.1f, 0), WorldMatrix),
-            Vector3.Transform(base.verticesColor[3].Position+new Vector3(0, 0.1f, 0), WorldMatrix));
+            Vector3.Transform(base.verticesColor[verticesColor.Length-1].Position+new Vector3(0, 0.1f, 0), WorldMatrix));
             OBoundingBox = BoundingOrientedBox.CreateFromBoundingBox(bb);
             _halfExtentStart = OBoundingBox.HalfExtent;
         }
         protected override void SetUpIndeces()
         {
-            indices = new int[6] {0, 1, 2, 2, 3, 1};
+            _indices = new int[6] {0, 3, 1, 0, 2, 3};
+            
+            _indices = new int[Width * Length * 6];
+
+            int counter = 0;
+            for (int y = 0; y < Length; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    int lowerLeft = x + y * (Width +1);
+                    int lowerRight = (x + 1) + y * (Width + 1);
+                    int topLeft = x + (y + 1) * (Width + 1);
+                    int topRight = (x + 1) + (y + 1) * (Width + 1);
+
+                    _indices[counter++] = topLeft;
+                    _indices[counter++] = lowerRight;
+                    _indices[counter++] = lowerLeft;
+
+                    _indices[counter++] = topLeft;
+                    _indices[counter++] = topRight;
+                    _indices[counter++] = lowerRight;
+                }
+            }
+
         }
         
         public override void ApplyTransform()
         {
-            WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up) * Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix.CreateTranslation(Translation) * Matrix.CreateScale(Scale);
+            WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up) * Matrix.CreateScale(Scale) * Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix.CreateTranslation(Translation);
             base.OBoundingBox = new BoundingOrientedBox(Translation, _halfExtentStart*Scale, Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z));
         }
         public override void ApplyColor(Color c)
