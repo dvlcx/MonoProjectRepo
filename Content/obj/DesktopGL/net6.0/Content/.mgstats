@@ -1,1 +1,3 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"/home/dvlcx/Projects/MonoProjectRepo/Content/font.spritefont","/home/dvlcx/Projects/MonoProjectRepo/Content/bin/DesktopGL/Content/font.xnb","FontDescriptionProcessor","SpriteFontContent",2009,21535,0.4962902
+"/home/dvlcx/Projects/MonoProjectRepo/Content/SolidWireframe.fx","/home/dvlcx/Projects/MonoProjectRepo/Content/bin/DesktopGL/Content/SolidWireframe.xnb","EffectProcessor","CompiledEffectContent",2090,3762,7.2451634

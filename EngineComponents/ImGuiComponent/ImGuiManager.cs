@@ -201,12 +201,16 @@ namespace MonoProject.EngineComponents
             System.Numerics.Vector3 rot = System.Numerics.Vector3.Zero;
             System.Numerics.Vector3 sc = new System.Numerics.Vector3(1f);
             System.Numerics.Vector3 color = System.Numerics.Vector3.Zero;
+            int length = 1;
+            int width = 1;
 
             selectedFigs.ForEach(fig => {
                 trans += Tools.ToSystemVector(fig.Translation); 
                 rot = Tools.ToSystemVector(fig.Rotation); 
                 sc = Tools.ToSystemVector(fig.Scale); 
                 color = Tools.ToSystemVector(fig.Color.ToVector3());
+                length = fig.Length;
+                width = fig.Width;
             });
             if(selectedFigs.Count == 1) Encoding.ASCII.GetBytes(selectedFigs[0].Name).CopyTo(name, 0);
 
@@ -217,19 +221,31 @@ namespace MonoProject.EngineComponents
             System.Numerics.Vector3 rotOrigin = rot;
             System.Numerics.Vector3 scOrigin = sc;
             System.Numerics.Vector3 colorOrigin = color;
+            int lengthOrigin = length;
+            int widthOrigin = width;    
 
+            //controls
             if(selectedFigs.Count == 1) ImGui.InputText("Name", name, 100);
             ImGui.DragFloat3("Translate", ref trans, 0.01f);
             ImGui.DragFloat3("Rotate", ref rot, 0.01f);
             ImGui.DragFloat3("Scale", ref sc, 0.01f);
             ImGui.ColorEdit3("Color", ref color);
+            ImGui.SliderInt("Height", ref length, 1, 100);
+            ImGui.SliderInt("Width", ref width, 1, 100);
 
+            //checks & applies
             if(trans!=transOrigin || rot!=rotOrigin || sc!=scOrigin) foreach(var fig in selectedFigs)
             {
                 fig.Translation += Tools.ToXnaVector(trans) - Tools.ToXnaVector(transOrigin);
                 fig.Rotation += Tools.ToXnaVector(rot) - Tools.ToXnaVector(rotOrigin);
                 fig.Scale += Tools.ToXnaVector(sc) - Tools.ToXnaVector(scOrigin);
                 fig.ApplyTransform();
+            }
+            if(length != lengthOrigin || width != widthOrigin)
+            {
+                selectedFigs[0].Length = length;
+                selectedFigs[0].Width = width;
+                selectedFigs[0].ApplyResize(selectedFigs[0].WorldMatrix);
             }
 
             if(color != colorOrigin) foreach (var fig2 in selectedFigs) fig2.ApplyColor(new Microsoft.Xna.Framework.Color(color.X, color.Y, color.Z));
@@ -276,7 +292,7 @@ namespace MonoProject.EngineComponents
         } 
         private static void AddFigureOutput(EditorManager em)
         {
-            if (ImGui.Selectable("Polygon")) EditorManager.AddFigure(new PolygonFigure(new Vector3(0, 0, 0)));
+            if (ImGui.Selectable("Polygon")) EditorManager.AddFigure(new PolygonFigure());
         }
     
     

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>D:/MonoProject/Content/font.spritefont</SourceFile>
-  <SourceTime>2020-08-10T19:17:28+03:00</SourceTime>
-  <DestFile>D:/MonoProject/Content/bin/DesktopGL/Content/font.xnb</DestFile>
-  <DestTime>2023-11-01T22:15:42.1117332+03:00</DestTime>
+  <SourceFile>/home/dvlcx/Projects/MonoProjectRepo/Content/font.spritefont</SourceFile>
+  <SourceTime>2023-12-26T22:44:00.1351747+03:00</SourceTime>
+  <DestFile>/home/dvlcx/Projects/MonoProjectRepo/Content/bin/DesktopGL/Content/font.xnb</DestFile>
+  <DestTime>2023-12-26T22:44:08.1585276+03:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2022-07-26T14:44:56+03:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

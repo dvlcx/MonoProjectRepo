@@ -286,19 +286,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\biba\\.nuget\\packages\\": {}
+    "/home/dvlcx/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\MonoProject\\MonoProject.csproj",
+      "projectUniqueName": "/home/dvlcx/Projects/MonoProjectRepo/MonoProject.csproj",
       "projectName": "MonoProject",
-      "projectPath": "D:\\MonoProject\\MonoProject.csproj",
-      "packagesPath": "C:\\Users\\biba\\.nuget\\packages\\",
-      "outputPath": "D:\\MonoProject\\obj\\",
+      "projectPath": "/home/dvlcx/Projects/MonoProjectRepo/MonoProject.csproj",
+      "packagesPath": "/home/dvlcx/.nuget/packages/",
+      "outputPath": "/home/dvlcx/Projects/MonoProjectRepo/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\biba\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/dvlcx/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
@@ -351,7 +351,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.408\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.100/RuntimeIdentifierGraph.json"
       }
     }
   }

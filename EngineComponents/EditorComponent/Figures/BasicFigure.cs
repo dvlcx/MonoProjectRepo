@@ -18,20 +18,11 @@ namespace MonoProject.EditorComponent
         public Matrix WorldMatrix {get; protected set;}
         public BoundingOrientedBox OBoundingBox {get; protected set;}
         public bool IsSelected {get; set;}
-        protected Vector3 position;
-        protected int vertexCount;
         protected int[] _indices;
         protected VertexPositionColor[] verticesColor;
         protected VertexPositionTexture[] verticesText;
         protected VertexBuffer vertexBuffer;
         
-        protected BasicFigure(Vector3 pos)
-        {
-            position = pos;
-            SetUpVertices();
-        }
-
-
         public abstract void LoadFigureContent();
         public abstract void DrawFigure(GraphicsDevice gr, BasicEffect effect, Matrix v, Matrix p);
         public abstract void DrawFigure(GraphicsDevice gr, Effect effect, Matrix v, Matrix p);

@@ -12,18 +12,37 @@ namespace MonoProject.EditorComponent
 {
     public class PolygonFigure : BasicFigure, IFigure
     {
-        public int Length {get; private set;} = 2;
-        public int Width  {get; private set;} = 1;
+        public int Length {get; set;}
+        public int Width  {get; set;}
+        public int Height {get; set;} = 1;
         public Texture2D Texture {get; private set;}
         private static int _counter = 0;
-        public PolygonFigure(Vector3 pos) : base(pos)
+        public PolygonFigure()
         {
             base.Name = "Polygon" + _counter;
-            base.Translation = pos;
+            base.Translation = Vector3.Zero;
             base.Rotation = Vector3.Zero;
             base.Scale = new Vector3(1f, 1f, 1f);
             base.Color = Color.White;
+            Length = 2;
+            Width = 1;
             WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up);
+            SetUpVertices();
+            SetUpBoundingBox();
+            SetUpIndeces();
+            _counter++;
+        }
+
+        public PolygonFigure(Matrix wm, int l, int w)
+        {
+            base.Name = "Polygon" + _counter;
+            base.Translation = Vector3.Zero;
+            base.Rotation = Vector3.Zero;
+            base.Scale = new Vector3(1f, 1f, 1f);
+            base.Color = Color.White;
+            WorldMatrix = wm;
+            Length = l;
+            Width = w;
             SetUpVertices();
             SetUpBoundingBox();
             SetUpIndeces();
@@ -120,12 +139,6 @@ namespace MonoProject.EditorComponent
         private Vector3 _halfExtentStart;
         protected override void SetUpVertices()
         {
-            base.verticesColor = new VertexPositionColor[4];
-            base.verticesColor[0] = new VertexPositionColor(new Vector3(1f/2f, 0, 1f/2f), base.Color);
-            base.verticesColor[1] = new VertexPositionColor(new Vector3(1f/2f, 0, -(1f/2f)), base.Color);
-            base.verticesColor[2] = new VertexPositionColor(new Vector3(-(1f/2f), 0, 1f/2f), base.Color);
-            base.verticesColor[3] = new VertexPositionColor(new Vector3(-(1f/2f), 0, -(1f/2f)), base.Color);
-            
             base.verticesColor = new VertexPositionColor[(Length + 1) * (Width + 1)];
             float shiftX = 0.5f * Width;
             float shiftZ = 0.5f * Length;
@@ -143,8 +156,8 @@ namespace MonoProject.EditorComponent
                     counter++;
                 }
             }
-        
         }
+
         private void SetUpBoundingBox()
         {
             BoundingBox bb = new BoundingBox(Vector3.Transform(base.verticesColor[0].Position+new Vector3(0, -0.1f, 0), WorldMatrix),
@@ -153,9 +166,7 @@ namespace MonoProject.EditorComponent
             _halfExtentStart = OBoundingBox.HalfExtent;
         }
         protected override void SetUpIndeces()
-        {
-            _indices = new int[6] {0, 3, 1, 0, 2, 3};
-            
+        {            
             _indices = new int[Width * Length * 6];
 
             int counter = 0;
@@ -185,6 +196,16 @@ namespace MonoProject.EditorComponent
             WorldMatrix = Matrix.CreateWorld(Vector3.Zero, Vector3.Forward, Vector3.Up) * Matrix.CreateScale(Scale) * Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix.CreateTranslation(Translation);
             base.OBoundingBox = new BoundingOrientedBox(Translation, _halfExtentStart*Scale, Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z));
         }
+
+        //returns new resized figure
+        public void ApplyResize(Matrix wm)
+        {
+            WorldMatrix = wm;
+            SetUpVertices();
+            SetUpBoundingBox();
+            SetUpIndeces();
+        }
+
         public override void ApplyColor(Color c)
         {
             Color = c;
