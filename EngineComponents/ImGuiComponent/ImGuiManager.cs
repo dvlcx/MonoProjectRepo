@@ -225,16 +225,19 @@ namespace MonoProject.EngineComponents
             int widthOrigin = width;    
 
             //controls
-            if(selectedFigs.Count == 1) ImGui.InputText("Name", name, 100);
+            if(selectedFigs.Count == 1) 
+            {
+                ImGui.InputText("Name", name, 100);
+                ImGui.SliderInt("Length", ref length, 1, 100);
+                ImGui.SliderInt("Width", ref width, 1, 100);
+            }
             ImGui.DragFloat3("Translate", ref trans, 0.01f);
             ImGui.DragFloat3("Rotate", ref rot, 0.01f);
             ImGui.DragFloat3("Scale", ref sc, 0.01f);
             ImGui.ColorEdit3("Color", ref color);
-            ImGui.SliderInt("Height", ref length, 1, 100);
-            ImGui.SliderInt("Width", ref width, 1, 100);
 
             //checks & applies
-            if(trans!=transOrigin || rot!=rotOrigin || sc!=scOrigin) foreach(var fig in selectedFigs)
+            if(trans != transOrigin || rot != rotOrigin || sc != scOrigin) foreach(var fig in selectedFigs)
             {
                 fig.Translation += Tools.ToXnaVector(trans) - Tools.ToXnaVector(transOrigin);
                 fig.Rotation += Tools.ToXnaVector(rot) - Tools.ToXnaVector(rotOrigin);

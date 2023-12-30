@@ -197,7 +197,6 @@ namespace MonoProject.EditorComponent
             base.OBoundingBox = new BoundingOrientedBox(Translation, _halfExtentStart*Scale, Quaternion.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z));
         }
 
-        //returns new resized figure
         public void ApplyResize(Matrix wm)
         {
             WorldMatrix = wm;
