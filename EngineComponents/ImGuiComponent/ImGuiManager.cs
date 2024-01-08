@@ -9,11 +9,13 @@ using ImGuiNET;
 using MonoProject.ImGuiComponent;
 using MonoProject.EditorComponent;
 
-using MonoProject.EngineComponents;
+using MonoProject.ProjectSystem;
+using System.IO;
 namespace MonoProject.EngineComponents
 {
     sealed class ImGuiManager : DrawableGameComponent
     {
+        private Game _game;
         private ImGuiRenderer _imGuiRenderer;
         private EditorManager _editorManager;
 
@@ -35,20 +37,29 @@ namespace MonoProject.EngineComponents
 
 
 
-        private Texture2D _xnaTexture;
-        private IntPtr _imGuiTexture;
+        private Texture2D _errorIconXna;
+        private IntPtr _errorIconImGui;
         
         public ImGuiManager(Game game, EditorManager em) : base (game)
         {
+            _game = game;
             _imGuiRenderer = new ImGuiRenderer(game);
             _imGuiRenderer.RebuildFontAtlas();
             _editorManager = em;
         }
         
+        protected override void LoadContent()
+        {
+            _errorIconXna = _game.Content.Load<Texture2D>("Content/error");
+            _errorIconImGui = _imGuiRenderer.BindTexture(_errorIconXna);
+
+            base.LoadContent();
+        }
+
         public override void Initialize()
         {
-            _startWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(800,300), new Num.Vector2(200,100),
-             "Start", () => StartOutput());
+            _startWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(860,400), new Num.Vector2(200, 300),
+             "Start", () => ProjectsOutput());
             _mainBar = new ImGuiMainMenuBar(() => MainBarOutput(_subWindow));
             _sceneHierarchyWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(0,19), new Num.Vector2(200, 800),
              "Scene Objects", () => SceneHierarchyOutput(_subWindow));
@@ -57,13 +68,6 @@ namespace MonoProject.EngineComponents
             _inspectorWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(1620,19), new Num.Vector2(300, 600),
              "Inspector", () => InspectorOutput());
 
-            _xnaTexture = Tools.CreateTexture(GraphicsDevice, 300, 150, pixel =>
-			{
-				var red = (pixel % 300) / 2;
-				return new Color(red, 1, 1);
-			});
-
-			_imGuiTexture = _imGuiRenderer.BindTexture(_xnaTexture);
             base.Initialize();
         }
 
@@ -85,7 +89,7 @@ namespace MonoProject.EngineComponents
                 _imGuiShow = true;
                 _imGuiRenderer.BeforeLayout(gameTime);
                 _startWindow.LayoutRealize();
-                 if(_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
+                if(_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
                 else _subWindow?.LayoutRealize();
                 _imGuiRenderer.AfterLayout();
                 return;
@@ -100,23 +104,43 @@ namespace MonoProject.EngineComponents
                 _inspectorWindow.LayoutRealize();
                 if (_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
                 else _subWindow?.LayoutRealize();
-
                 _imGuiRenderer.AfterLayout();
             }
-
 
             base.Draw(gameTime);
         }
 
         #region MainControls
-        private void StartOutput()
+        private static Project _selectedProject = null;
+
+        private void ProjectsOutput()
         {
-            if(ImGui.Button("New Project")) ChangeSubWindow(SubWindowType.NewProjectW);
             Projects projects = null;
+            if(ImGui.Button("New Project")) ChangeSubWindow(SubWindowType.NewProjectW);
             projects = ProjectHandler.DeserializeProjects();
             if(projects == null) return;
-            foreach (var p in projects.ProjectList) if(ImGui.Selectable(p.Name)) ProjectHandler.OpenProject(p.Path, p.Name);
+            foreach (var pr in projects.ProjectList) 
+            {
+                if(ImGui.Selectable(pr.Path + pr.Name, 
+                    pr.Path == _selectedProject?.Path && pr.Name == _selectedProject?.Name)) _selectedProject = pr;
+                if(!Directory.Exists(pr.Path + pr.Name))
+                {
+                    ImGui.SameLine();
+                    ImGui.Image(_errorIconImGui, new Num.Vector2(13, 13));
+                }
+            }
             
+            if(ImGui.Button("Open"))
+            {
+                ProjectHandler.OpenProject(_selectedProject.Path, _selectedProject.Name);
+                _selectedProject = null;
+            } 
+            ImGui.SameLine(0, 100);
+            if(ImGui.Button("Delete"))
+            {
+                _selectedProject = null;
+            }
+
             //read file
             /*
                 <projectlist>
@@ -258,7 +282,7 @@ namespace MonoProject.EngineComponents
         private static void GameHierarchyOutput()
         {
             //need cycle to spawn Controller objects
-
+            throw new NotImplementedException();
         }
         #endregion
         

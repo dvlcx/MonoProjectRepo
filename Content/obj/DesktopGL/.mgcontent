@@ -4,10 +4,12 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>d:/MonoProject/Content/font.spritefont</File>
-    <File>d:/MonoProject/Content/SolidWireframe.fx</File>
+    <File>/home/dvlcx/Projects/MonoProjectRepo/Content/error.png</File>
+    <File>/home/dvlcx/Projects/MonoProjectRepo/Content/font.spritefont</File>
+    <File>/home/dvlcx/Projects/MonoProjectRepo/Content/SolidWireframe.fx</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
   </DestFiles>

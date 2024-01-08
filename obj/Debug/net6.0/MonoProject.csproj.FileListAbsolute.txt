@@ -65,3 +65,4 @@ D:/MonoProject/bin/Debug/net6.0/Content/SolidWireframe.xnb
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.pdb
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.genruntimeconfig.cache
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/ref/MonoProject.dll
+/home/dvlcx/Projects/MonoProjectRepo/bin/Debug/net6.0/Content/error.xnb

@@ -170,9 +170,5 @@ namespace MonoProject.EngineComponents
                 ListChanged = true;
             }
         }
-
-
-
-
     }
 }

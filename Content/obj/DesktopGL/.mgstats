@@ -1,2 +1,4 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"d:/MonoProject/Content/SolidWireframe.fx","d:/MonoProject/Content/bin/DesktopGL/SolidWireframe.xnb","EffectProcessor","CompiledEffectContent",1277,2316,0,7884536
+"/home/dvlcx/Projects/MonoProjectRepo/Content/error.png","/home/dvlcx/Projects/MonoProjectRepo/Content/bin/DesktopGL/error.xnb","TextureProcessor","Texture2DContent",5051,262229,0.4096596
+"/home/dvlcx/Projects/MonoProjectRepo/Content/font.spritefont","/home/dvlcx/Projects/MonoProjectRepo/Content/bin/DesktopGL/font.xnb","FontDescriptionProcessor","SpriteFontContent",2009,21535,0.2727796
+"/home/dvlcx/Projects/MonoProjectRepo/Content/SolidWireframe.fx","/home/dvlcx/Projects/MonoProjectRepo/Content/bin/DesktopGL/SolidWireframe.xnb","EffectProcessor","CompiledEffectContent",2090,3762,11.509027

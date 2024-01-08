@@ -2,15 +2,17 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace MonoProject
+namespace MonoProject.ProjectSystem
 {
     static class ProjectHandler
     {
         public static Project currentProject = null;
+
         public static void CreateProject(string path, string name, out string status)
         {
             if(!Directory.Exists(path)) 
@@ -23,29 +25,43 @@ namespace MonoProject
                 status = "Empty name!";
                 return;
             }
-            
+
+            GetCreationString(path, name, out string fileName, out string arguments);
             Process process = new Process();
             process.StartInfo  = new ProcessStartInfo
             {
-                FileName = "dotnet.exe",
+                FileName = fileName,
+                Arguments = arguments,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                Arguments = $"new mgdesktopgl -o {path}\\{name}"
+                RedirectStandardError = true
             };
             process.Start();
             status = process.StandardOutput.ReadLine() + process.StandardError.ReadLine();
-            if (Directory.Exists($"{path}\\{name}")) 
+            if (Directory.Exists(arguments.Substring(arguments.IndexOf("-o") + 3))) 
             {
                 Projects prs = DeserializeProjects();
                 if(prs == null) prs = new Projects();
                 prs.ProjectList.Add(new Project(name, path));
                 SerializeProjects(prs);
-
                 OpenProject(path, name);
             }
         }
-        
+
+        private static void GetCreationString(string path, string name, out string fileName, out string arguments)
+        {
+            if(OperatingSystem.IsWindows())
+            {
+                fileName = "dotnet.exe";
+                arguments = $"new mgdesktopgl -o {path}\\{name}";
+            }   
+            else
+            {
+                fileName = "dotnet";
+                arguments = $"new mgdesktopgl -o {path}/{name}";    
+            }
+        }
+
         public static void OpenProject(string path, string name)
         {
             currentProject = new Project(name, path);
@@ -63,10 +79,11 @@ namespace MonoProject
             XmlSerializer xml = new XmlSerializer(typeof(Projects));
             using (FileStream fs = new FileStream("Projects.xml", FileMode.OpenOrCreate))
             {
-            if(fs.Length == 0) return null;
-            return (Projects)xml.Deserialize(fs);
+                if(fs.Length == 0) return null;
+                return (Projects)xml.Deserialize(fs);
             }
         }
+
 
         public static void Save()
         {
