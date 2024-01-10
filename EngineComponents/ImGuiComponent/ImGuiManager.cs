@@ -79,11 +79,14 @@ namespace MonoProject.EngineComponents
             IsSmthHovered = ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow | ImGuiHoveredFlags.AllowWhenBlockedByPopup) | ImGui.IsAnyItemHovered();
             IsSmthFocused = ImGui.IsAnyItemActive();
             if(_subWindow != null) IsAnySubWindowActive = true;
+
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {            
+            _imGuiRenderer.BeforeLayout(gameTime);
+
             if(ProjectHandler.currentProject == null)
             {
                 _imGuiShow = true;
@@ -97,28 +100,29 @@ namespace MonoProject.EngineComponents
 
             if (_imGuiShow)
             {
-                _imGuiRenderer.BeforeLayout(gameTime);
                 _mainBar.LayoutRealize();
                 _sceneHierarchyWindow.LayoutRealize();
                 _gameHierarchyWindow.LayoutRealize();
                 _inspectorWindow.LayoutRealize();
                 if (_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
                 else _subWindow?.LayoutRealize();
-                _imGuiRenderer.AfterLayout();
             }
-
+            
+            _imGuiRenderer.AfterLayout();
             base.Draw(gameTime);
         }
 
         #region MainControls
-        private static Project _selectedProject = null;
 
+        private Project _selectedProject = null;
         private void ProjectsOutput()
         {
             Projects projects = null;
             if(ImGui.Button("New Project")) ChangeSubWindow(SubWindowType.NewProjectW);
             projects = ProjectHandler.DeserializeProjects();
             if(projects == null) return;
+
+            ImGui.BeginListBox("", new Num.Vector2(185, 211));
             foreach (var pr in projects.ProjectList) 
             {
                 if(ImGui.Selectable(pr.Path + pr.Name, 
@@ -129,7 +133,8 @@ namespace MonoProject.EngineComponents
                     ImGui.Image(_errorIconImGui, new Num.Vector2(13, 13));
                 }
             }
-            
+            ImGui.EndListBox();
+
             if(ImGui.Button("Open"))
             {
                 ProjectHandler.OpenProject(_selectedProject.Path, _selectedProject.Name);
@@ -138,6 +143,9 @@ namespace MonoProject.EngineComponents
             ImGui.SameLine(0, 100);
             if(ImGui.Button("Delete"))
             {
+                projects.ProjectList.RemoveAll(p => p.Name == _selectedProject.Name && p.Path == _selectedProject.Path);
+                System.IO.File.WriteAllText("Projects.xml", string.Empty);
+                ProjectHandler.SerializeProjects(projects);
                 _selectedProject = null;
             }
 
@@ -158,6 +166,7 @@ namespace MonoProject.EngineComponents
                 foreach selectable - open project with path + name params
             */
         }
+
         private void MainBarOutput(ImGuiSubWindow subW)
         {
             ImGui.BeginMainMenuBar();
@@ -183,6 +192,7 @@ namespace MonoProject.EngineComponents
                 ImGui.EndMainMenuBar();
             }
         }
+
         private void SceneHierarchyOutput(ImGuiSubWindow subW)
         {
             if (ImGui.Button("Add"))

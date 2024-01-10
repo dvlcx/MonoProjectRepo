@@ -18,12 +18,11 @@ namespace MonoProject.EngineComponents
         private SpriteFont _font;
         private BaseAxis _axes;
 
-
-
-        public static List<IFigure> Figures;
         public static bool ListChanged {get; set;}
         public static KeyboardState KeyboardState {get; private set;}
         public static MouseState MouseState {get; private set;}
+
+        public static List<IFigure> Figures {get; set;}
 
         public EditorManager(Game game) : base (game)
         {

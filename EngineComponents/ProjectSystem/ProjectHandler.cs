@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace MonoProject.ProjectSystem
@@ -50,6 +51,8 @@ namespace MonoProject.ProjectSystem
 
         private static void GetCreationString(string path, string name, out string fileName, out string arguments)
         {
+            path = path.TrimStart(' ');
+            path = path.TrimEnd(@"/\ ".ToCharArray());
             if(OperatingSystem.IsWindows())
             {
                 fileName = "dotnet.exe";

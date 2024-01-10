@@ -34,7 +34,6 @@ namespace MonoProject
             Components.Add(_editorManager);
             Components.Add(_imGuiManager);
 
-
             base.Initialize();
         }
 

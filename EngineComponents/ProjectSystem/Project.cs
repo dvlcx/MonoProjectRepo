@@ -28,7 +28,5 @@ namespace MonoProject
             this.Name = name;
             this.Path = path;
         }
-
-        
     }
 }
