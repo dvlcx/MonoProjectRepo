@@ -31,7 +31,6 @@ namespace MonoProject
             _editorManager = new EditorManager(this);
             _imGuiManager = new ImGuiManager(this, _editorManager);
             
-            Components.Add(_editorManager);
             Components.Add(_imGuiManager);
 
             base.Initialize();

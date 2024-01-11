@@ -26,6 +26,7 @@ namespace MonoProject.EngineComponents
 
         public EditorManager(Game game) : base (game)
         {
+            DrawOrder = 0;
             _game = game; 
         }
 

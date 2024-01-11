@@ -11,6 +11,7 @@ using MonoProject.EditorComponent;
 
 using MonoProject.ProjectSystem;
 using System.IO;
+using System.Data;
 namespace MonoProject.EngineComponents
 {
     sealed class ImGuiManager : DrawableGameComponent
@@ -42,6 +43,7 @@ namespace MonoProject.EngineComponents
         
         public ImGuiManager(Game game, EditorManager em) : base (game)
         {
+            DrawOrder = 1;
             _game = game;
             _imGuiRenderer = new ImGuiRenderer(game);
             _imGuiRenderer.RebuildFontAtlas();
@@ -67,7 +69,8 @@ namespace MonoProject.EngineComponents
              "Game Structure", () => MainBarOutput(_subWindow));
             _inspectorWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(1620,19), new Num.Vector2(300, 600),
              "Inspector", () => InspectorOutput());
-
+            
+            DrawCurrentState = () => StartDraw();
             base.Initialize();
         }
 
@@ -83,21 +86,28 @@ namespace MonoProject.EngineComponents
             base.Update(gameTime);
         }
 
-        public override void Draw(GameTime gameTime)
-        {            
-            _imGuiRenderer.BeforeLayout(gameTime);
-
+        private Action DrawCurrentState {get; set;} = null;
+        private void StartDraw()
+        {
             if(ProjectHandler.currentProject == null)
             {
                 _imGuiShow = true;
-                _imGuiRenderer.BeforeLayout(gameTime);
+                GraphicsDevice.Clear(Color.Bisque);
                 _startWindow.LayoutRealize();
                 if(_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
                 else _subWindow?.LayoutRealize();
                 _imGuiRenderer.AfterLayout();
                 return;
             }
+            else 
+            {
+                _game.Components.Add(_editorManager);
+                DrawCurrentState = () => NormalDraw();
+            }
+        }
 
+        private void NormalDraw()
+        {
             if (_imGuiShow)
             {
                 _mainBar.LayoutRealize();
@@ -107,13 +117,19 @@ namespace MonoProject.EngineComponents
                 if (_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
                 else _subWindow?.LayoutRealize();
             }
+        }
+
+        public override void Draw(GameTime gameTime)
+        {            
+            _imGuiRenderer.BeforeLayout(gameTime);
+
+            DrawCurrentState.Invoke();
             
             _imGuiRenderer.AfterLayout();
             base.Draw(gameTime);
         }
 
         #region MainControls
-
         private Project _selectedProject = null;
         private void ProjectsOutput()
         {
