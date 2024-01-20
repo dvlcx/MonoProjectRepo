@@ -42,14 +42,14 @@
           }
         }
       },
-      "MonoGame.Content.Builder.Task/3.8.1.303": {
+      "MonoGame.Content.Builder.Task.Compute/3.8.2": {
         "type": "package",
         "build": {
-          "build/MonoGame.Content.Builder.Task.props": {},
-          "build/MonoGame.Content.Builder.Task.targets": {}
+          "build/MonoGame.Content.Builder.Task.Compute.props": {},
+          "build/MonoGame.Content.Builder.Task.Compute.targets": {}
         }
       },
-      "MonoGame.Framework.DesktopGL/3.8.1.303": {
+      "MonoGame.Framework.Compute.DesktopGL/3.8.2": {
         "type": "package",
         "compile": {
           "lib/net6.0/MonoGame.Framework.dll": {}
@@ -58,7 +58,7 @@
           "lib/net6.0/MonoGame.Framework.dll": {}
         },
         "build": {
-          "build/MonoGame.Framework.DesktopGL.targets": {}
+          "build/MonoGame.Framework.Compute.DesktopGL.targets": {}
         },
         "runtimeTargets": {
           "runtimes/linux-x64/native/libSDL2-2.0.so.0": {
@@ -150,32 +150,32 @@
         "runtimes/win-x86/native/cimgui.dll"
       ]
     },
-    "MonoGame.Content.Builder.Task/3.8.1.303": {
-      "sha512": "9Ilzzje62LhWElbPNEl7vh7XsRSbze+lvCJdZtTZUGu48FRgvYN6THURwIB9PN98EI33/Wnf6iuShNUtD7hL4Q==",
+    "MonoGame.Content.Builder.Task.Compute/3.8.2": {
+      "sha512": "+looAhdr9pk6YjZugY4kG4KiwhxbYTnuRQ3vSAe/Wskv5JT5fzUdhMzhAY5xSclP3F5bNNk84r6Ozi2dKe93ZQ==",
       "type": "package",
-      "path": "monogame.content.builder.task/3.8.1.303",
+      "path": "monogame.content.builder.task.compute/3.8.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
-        "build/MonoGame.Content.Builder.Task.props",
-        "build/MonoGame.Content.Builder.Task.targets",
-        "monogame.content.builder.task.3.8.1.303.nupkg.sha512",
-        "monogame.content.builder.task.nuspec"
+        "build/MonoGame.Content.Builder.Task.Compute.props",
+        "build/MonoGame.Content.Builder.Task.Compute.targets",
+        "monogame.content.builder.task.compute.3.8.2.nupkg.sha512",
+        "monogame.content.builder.task.compute.nuspec"
       ]
     },
-    "MonoGame.Framework.DesktopGL/3.8.1.303": {
-      "sha512": "eGYhqn0n1olk8MNYeE9EuBmoNNECN1T18rPMaQpkzsEQ0H3nVyFPXC+uCo78v5pi5juQpJ3PSFnSkjzZJ1U58A==",
+    "MonoGame.Framework.Compute.DesktopGL/3.8.2": {
+      "sha512": "zVPJxgMx4KtuD9JYej/o5kIpNurPROnGYMOPfTFYEx2jTe0R+PqziAa+emgnv0CfG3hYQOPbUtbVwXWVFKRPSw==",
       "type": "package",
-      "path": "monogame.framework.desktopgl/3.8.1.303",
+      "path": "monogame.framework.compute.desktopgl/3.8.2",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
-        "build/MonoGame.Framework.DesktopGL.targets",
+        "build/MonoGame.Framework.Compute.DesktopGL.targets",
         "lib/net6.0/MonoGame.Framework.dll",
-        "monogame.framework.desktopgl.3.8.1.303.nupkg.sha512",
-        "monogame.framework.desktopgl.nuspec",
+        "monogame.framework.compute.desktopgl.3.8.2.nupkg.sha512",
+        "monogame.framework.compute.desktopgl.nuspec",
         "runtimes/linux-x64/native/libSDL2-2.0.so.0",
         "runtimes/linux-x64/native/libopenal.so.1",
         "runtimes/osx/native/libSDL2.dylib",
@@ -281,8 +281,8 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "ImGui.NET >= 1.89.7.1",
-      "MonoGame.Content.Builder.Task >= 3.8.1.303",
-      "MonoGame.Framework.DesktopGL >= 3.8.1.303"
+      "MonoGame.Content.Builder.Task.Compute >= 3.8.2",
+      "MonoGame.Framework.Compute.DesktopGL >= 3.8.2"
     ]
   },
   "packageFolders": {
@@ -326,13 +326,13 @@
             "target": "Package",
             "version": "[1.89.7.1, )"
           },
-          "MonoGame.Content.Builder.Task": {
+          "MonoGame.Content.Builder.Task.Compute": {
             "target": "Package",
-            "version": "[3.8.1.303, )"
+            "version": "[3.8.2, )"
           },
-          "MonoGame.Framework.DesktopGL": {
+          "MonoGame.Framework.Compute.DesktopGL": {
             "target": "Package",
-            "version": "[3.8.1.303, )"
+            "version": "[3.8.2, )"
           }
         },
         "imports": [

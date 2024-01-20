@@ -42,13 +42,13 @@
               "target": "Package",
               "version": "[1.89.7.1, )"
             },
-            "MonoGame.Content.Builder.Task": {
+            "MonoGame.Content.Builder.Task.Compute": {
               "target": "Package",
-              "version": "[3.8.1.303, )"
+              "version": "[3.8.2, )"
             },
-            "MonoGame.Framework.DesktopGL": {
+            "MonoGame.Framework.Compute.DesktopGL": {
               "target": "Package",
-              "version": "[3.8.1.303, )"
+              "version": "[3.8.2, )"
             }
           },
           "imports": [

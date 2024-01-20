@@ -13,6 +13,6 @@
     <SourceRoot Include="/home/dvlcx/.nuget/packages/" />
   </ItemGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)monogame.content.builder.task/3.8.1.303/build/MonoGame.Content.Builder.Task.props" Condition="Exists('$(NuGetPackageRoot)monogame.content.builder.task/3.8.1.303/build/MonoGame.Content.Builder.Task.props')" />
+    <Import Project="$(NuGetPackageRoot)monogame.content.builder.task.compute/3.8.2/build/MonoGame.Content.Builder.Task.Compute.props" Condition="Exists('$(NuGetPackageRoot)monogame.content.builder.task.compute/3.8.2/build/MonoGame.Content.Builder.Task.Compute.props')" />
   </ImportGroup>
 </Project>

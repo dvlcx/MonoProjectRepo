@@ -9,8 +9,8 @@
       "MonoProject/1.0.0": {
         "dependencies": {
           "ImGui.NET": "1.89.7.1",
-          "MonoGame.Content.Builder.Task": "3.8.1.303",
-          "MonoGame.Framework.DesktopGL": "3.8.1.303"
+          "MonoGame.Content.Builder.Task.Compute": "3.8.2",
+          "MonoGame.Framework.Compute.DesktopGL": "3.8.2"
         },
         "runtime": {
           "MonoProject.dll": {}
@@ -56,12 +56,12 @@
           }
         }
       },
-      "MonoGame.Content.Builder.Task/3.8.1.303": {},
-      "MonoGame.Framework.DesktopGL/3.8.1.303": {
+      "MonoGame.Content.Builder.Task.Compute/3.8.2": {},
+      "MonoGame.Framework.Compute.DesktopGL/3.8.2": {
         "runtime": {
           "lib/net6.0/MonoGame.Framework.dll": {
-            "assemblyVersion": "3.8.1.303",
-            "fileVersion": "3.8.1.303"
+            "assemblyVersion": "3.8.2.0",
+            "fileVersion": "3.8.2.0"
           }
         },
         "runtimeTargets": {
@@ -125,19 +125,19 @@
       "path": "imgui.net/1.89.7.1",
       "hashPath": "imgui.net.1.89.7.1.nupkg.sha512"
     },
-    "MonoGame.Content.Builder.Task/3.8.1.303": {
+    "MonoGame.Content.Builder.Task.Compute/3.8.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-9Ilzzje62LhWElbPNEl7vh7XsRSbze+lvCJdZtTZUGu48FRgvYN6THURwIB9PN98EI33/Wnf6iuShNUtD7hL4Q==",
-      "path": "monogame.content.builder.task/3.8.1.303",
-      "hashPath": "monogame.content.builder.task.3.8.1.303.nupkg.sha512"
+      "sha512": "sha512-+looAhdr9pk6YjZugY4kG4KiwhxbYTnuRQ3vSAe/Wskv5JT5fzUdhMzhAY5xSclP3F5bNNk84r6Ozi2dKe93ZQ==",
+      "path": "monogame.content.builder.task.compute/3.8.2",
+      "hashPath": "monogame.content.builder.task.compute.3.8.2.nupkg.sha512"
     },
-    "MonoGame.Framework.DesktopGL/3.8.1.303": {
+    "MonoGame.Framework.Compute.DesktopGL/3.8.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-eGYhqn0n1olk8MNYeE9EuBmoNNECN1T18rPMaQpkzsEQ0H3nVyFPXC+uCo78v5pi5juQpJ3PSFnSkjzZJ1U58A==",
-      "path": "monogame.framework.desktopgl/3.8.1.303",
-      "hashPath": "monogame.framework.desktopgl.3.8.1.303.nupkg.sha512"
+      "sha512": "sha512-zVPJxgMx4KtuD9JYej/o5kIpNurPROnGYMOPfTFYEx2jTe0R+PqziAa+emgnv0CfG3hYQOPbUtbVwXWVFKRPSw==",
+      "path": "monogame.framework.compute.desktopgl/3.8.2",
+      "hashPath": "monogame.framework.compute.desktopgl.3.8.2.nupkg.sha512"
     },
     "System.Buffers/4.4.0": {
       "type": "package",

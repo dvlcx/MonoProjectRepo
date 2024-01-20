@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MonoProject")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a7cc4a1f9fd2ccc1393f03de6756288ee571e69c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5bd413f0f6db4e6bfce4e4cea07b77e037a613a7")]
 [assembly: System.Reflection.AssemblyProductAttribute("MonoProject")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MonoProject")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
