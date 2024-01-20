@@ -76,18 +76,19 @@ namespace MonoProject.EditorComponent
             //pray for geometry shader support in future
             if (IsSelected) 
             {
-                foreach (var pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
-                    _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
-                }
+                effect.CurrentTechnique.Passes[0].Apply();
+                gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
+                 _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
+                
+                effect.CurrentTechnique.Passes[1].Apply();
+                gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verticesColor, 0, verticesColor.Length,
+                 _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
+
                 if(EditorManager.IsPointEditMode)
                 {
-                    foreach(var i in _indices)
-                    {
-                        DrawVertexCircle(gr, verticesColor[i].Position);
-                    }
+                   effect.CurrentTechnique.Passes[0].Apply();
+                gr.DrawUserIndexedPrimitives(PrimitiveType.PointList, verticesColor, 0, verticesColor.Length,
+                 _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
                 }
             }
             else 
@@ -131,7 +132,7 @@ namespace MonoProject.EditorComponent
             verts[1] = new VertexPositionTexture(new Vector3(1f/2f,0,-(1f/2f)), new Vector2(0, -1));
             verts[2] = new VertexPositionTexture(new Vector3(-(1f/2f),0,1f/2f), new Vector2(-1, 0));
             verts[3] = new VertexPositionTexture(new Vector3(-(1f/2f),0,-(1f/2f)), new Vector2(-1, -1));
-            gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verts, 0, inds.Length,
+            gr.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, verts, 0, verts.Length,
                     _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
             
         }

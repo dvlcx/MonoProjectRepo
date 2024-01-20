@@ -92,7 +92,7 @@ namespace MonoProject.EngineComponents
             if(ProjectHandler.currentProject == null)
             {
                 _imGuiShow = true;
-                GraphicsDevice.Clear(Color.Bisque);
+                GraphicsDevice.Clear(Color.CornflowerBlue);
                 _startWindow.LayoutRealize();
                 if(_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
                 else _subWindow?.LayoutRealize();
@@ -153,7 +153,7 @@ namespace MonoProject.EngineComponents
 
             if(ImGui.Button("Open"))
             {
-                ProjectHandler.OpenProject(_selectedProject.Path, _selectedProject.Name);
+                ProjectHandler.OpenProject(_selectedProject?.Path, _selectedProject?.Name);
                 _selectedProject = null;
             } 
             ImGui.SameLine(0, 100);

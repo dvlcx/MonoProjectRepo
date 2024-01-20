@@ -67,6 +67,7 @@ namespace MonoProject.ProjectSystem
 
         public static void OpenProject(string path, string name)
         {
+            if (path is null || name is null || path.Length == 0 || name.Length == 0) return;
             currentProject = new Project(name, path);
         }
         
