@@ -1,8 +1,7 @@
 // Standard defines
 #if OPENGL
-	#define SV_POSITION POSITION
-	#define VS_SHADERMODEL vs_3_0
-	#define PS_SHADERMODEL ps_3_0
+	#define VS_SHADERMODEL vs_4_0
+	#define PS_SHADERMODEL ps_4_0
 #else
 	#define VS_SHADERMODEL vs_5_0
 	#define PS_SHADERMODEL ps_5_0
@@ -23,7 +22,7 @@ struct VertexShaderInput
 
 struct VertexShaderOutput
 {
-    float4 Position : POSITION0;
+    float4 Position     : SV_POSITION;
 
     float4 Color		: COLOR0;
 };
@@ -42,7 +41,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
     return output;
 }
 
-float4 MainPS(VertexShaderOutput input) : COLOR0
+float4 MainPS(VertexShaderOutput input) : SV_TARGET
 {    
     return input.Color;
 }
@@ -57,20 +56,12 @@ VertexShaderOutput WireVS(in VertexShaderInput input)
     return output;
 }
 
-float4 WirePS(VertexShaderOutput input) : COLOR0
+float4 WirePS(VertexShaderOutput input) : SV_TARGET
 {    
     float4 invertedColor = float4(1.0 - input.Color.rgb, 1);
     return invertedColor;
 }
 
-VertexShaderOutput DotVS(in VertexShaderInput input)
-{
-    VertexShaderOutput output = (VertexShaderOutput)0;
-    output.Position =  mul(mul(mul(input.Position, World), View), Projection);
-    output.Position *= 10;
-    output.Color = input.Color;
-    return output;
-}
 
 // Technique and passes within the technique
 technique ColorEffect
