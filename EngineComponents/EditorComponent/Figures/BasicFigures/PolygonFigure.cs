@@ -86,9 +86,9 @@ namespace MonoProject.EditorComponent
 
                 if(EditorManager.IsPointEditMode)
                 {
-                   effect.CurrentTechnique.Passes[0].Apply();
+                   effect.CurrentTechnique.Passes[2].Apply();
                 gr.DrawUserIndexedPrimitives(PrimitiveType.PointList, verticesColor, 0, verticesColor.Length,
-                 _indices, 0, _indices.Length/3, VertexPositionColor.VertexDeclaration);
+                 _indices, 0, _indices.Length, VertexPositionColor.VertexDeclaration);
                 }
             }
             else 
