@@ -8,9 +8,6 @@ using Num = System.Numerics;
 using ImGuiNET;
 using MonoProject.ImGuiComponent;
 using MonoProject.EditorComponent;
-
-using MonoProject.ProjectSystem;
-using System.IO;
 using System.Data;
 namespace MonoProject.EngineComponents
 {
@@ -19,6 +16,7 @@ namespace MonoProject.EngineComponents
         private Game _game;
         private ImGuiRenderer _imGuiRenderer;
         private EditorManager _editorManager;
+        private ProjectManager _projectManager;
 
         //settings
         private bool _imGuiShow = true;
@@ -28,15 +26,13 @@ namespace MonoProject.EngineComponents
 
         //main widgets
         private ImGuiMainMenuBar _mainBar; //upper main menu bar
-        private ImGuiMainWindow _startWindow;
+        private ImGuiMainWindow _startWindow; //start window (to choose project)
         private ImGuiMainWindow _inspectorWindow; //game object inspector (for transform)
         private ImGuiMainWindow _sceneHierarchyWindow; //scene inspector (node tree of scene objects)
         private ImGuiMainWindow _gameHierarchyWindow; //game inspector (node tree of scenes)
 
         //sub widgets shit
         private ImGuiSubWindow _subWindow; 
-
-
 
         private Texture2D _errorIconXna;
         private IntPtr _errorIconImGui;
@@ -48,6 +44,7 @@ namespace MonoProject.EngineComponents
             _imGuiRenderer = new ImGuiRenderer(game);
             _imGuiRenderer.RebuildFontAtlas();
             _editorManager = em;
+
         }
         
         protected override void LoadContent()
@@ -60,6 +57,9 @@ namespace MonoProject.EngineComponents
 
         public override void Initialize()
         {
+            _projectManager = (ProjectManager)_game.Components[0];
+            _projects = _projectManager.DeserializeProjects();
+
             _startWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(860,400), new Num.Vector2(200, 300),
              "Start", () => ProjectsOutput());
             _mainBar = new ImGuiMainMenuBar(() => MainBarOutput(_subWindow));
@@ -86,10 +86,9 @@ namespace MonoProject.EngineComponents
             base.Update(gameTime);
         }
 
-        private Action DrawCurrentState {get; set;} = null;
         private void StartDraw()
         {
-            if(ProjectHandler.currentProject == null)
+            if(_projectManager.CurrentProject == null)
             {
                 _imGuiShow = true;
                 GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -114,10 +113,12 @@ namespace MonoProject.EngineComponents
                 _sceneHierarchyWindow.LayoutRealize();
                 _gameHierarchyWindow.LayoutRealize();
                 _inspectorWindow.LayoutRealize();
-                if (_subWindow != null && !_subWindow.Status) ChangeSubWindow(SubWindowType.Null);
+                if (_subWindow is null) ChangeSubWindow(SubWindowType.Null);
                 else _subWindow?.LayoutRealize();
             }
         }
+
+        private Action DrawCurrentState {get; set;} = null;
 
         public override void Draw(GameTime gameTime)
         {            
@@ -130,41 +131,49 @@ namespace MonoProject.EngineComponents
         }
 
         #region MainControls
+        private Projects _projects;
         private Project _selectedProject = null;
         private void ProjectsOutput()
         {
-            Projects projects = null;
             if(ImGui.Button("New Project")) ChangeSubWindow(SubWindowType.NewProjectW);
-            projects = ProjectHandler.DeserializeProjects();
-            if(projects == null) return;
+
+            _projectManager.ToUpdate += () => _projectManager.CheckProjects(_projects);
 
             ImGui.BeginListBox("", new Num.Vector2(185, 211));
-            foreach (var pr in projects.ProjectList) 
+            foreach (var pr in _projects.ProjectList) 
             {
-                if(ImGui.Selectable(pr.Path + pr.Name, 
-                    pr.Path == _selectedProject?.Path && pr.Name == _selectedProject?.Name)) _selectedProject = pr;
-                if(!Directory.Exists(pr.Path + pr.Name))
+                string fullPathString = pr.GetFullString();
+
+                if(ImGui.Selectable(pr.Name, 
+                    pr.Path == _selectedProject?.Path && pr.Name == _selectedProject?.Name)){
+
+                     _selectedProject = pr;}
+                if(!pr.Exists)
                 {
                     ImGui.SameLine();
                     ImGui.Image(_errorIconImGui, new Num.Vector2(13, 13));
                 }
             }
             ImGui.EndListBox();
-
-            if(ImGui.Button("Open"))
-            {
-                ProjectHandler.OpenProject(_selectedProject?.Path, _selectedProject?.Name);
-                _selectedProject = null;
-            } 
-            ImGui.SameLine(0, 100);
-            if(ImGui.Button("Delete"))
-            {
-                projects.ProjectList.RemoveAll(p => p.Name == _selectedProject.Name && p.Path == _selectedProject.Path);
-                System.IO.File.WriteAllText("Projects.xml", string.Empty);
-                ProjectHandler.SerializeProjects(projects);
-                _selectedProject = null;
+            if(_selectedProject is null)
+            {   
+                ImGui.BeginDisabled();
             }
-
+                if(_selectedProject is not null && !_selectedProject.Exists) ImGui.BeginDisabled(); 
+                if(ImGui.Button("Open"))
+                {
+                    _projectManager.ToUpdate +=  () => _projectManager.OpenProject(_selectedProject?.Path, _selectedProject?.Name);
+                }
+                ImGui.EndDisabled();
+                ImGui.SameLine(0, 100);
+                if(ImGui.Button("Delete"))
+                {
+                    _projects.ProjectList.RemoveAll(p => p.Name == _selectedProject.Name && p.Path == _selectedProject.Path);
+                    System.IO.File.WriteAllText("Projects.xml", string.Empty);
+                    _projectManager.ToUpdate +=  () => _projectManager.SerializeProjects(_projects);
+                    _selectedProject = null;
+                }
+            
             //read file
             /*
                 <projectlist>
@@ -336,10 +345,7 @@ namespace MonoProject.EngineComponents
             ImGui.InputText("Project Name", _name, 50);
             if (ImGui.Button("Create"))
             {
-                ProjectHandler.CreateProject(Encoding.ASCII.GetString(Tools.CropByte(_path)), Encoding.ASCII.GetString(Tools.CropByte(_name)), out _status);
-                //  ProjectHandler.OpenProject();
-                Array.Clear(_path);
-                Array.Clear(_name);
+                _projectManager.CreateProject(Encoding.ASCII.GetString(Tools.CropByte(_path)), Encoding.ASCII.GetString(Tools.CropByte(_name)), out _status);
             }  
             ImGui.Text($"Status: \n{_status}".TrimEnd(':'));
         } 

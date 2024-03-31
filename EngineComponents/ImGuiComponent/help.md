@@ -9,5 +9,4 @@ Create nodes, connect them
 Edit scenes using this editor
 Edit code using your default code editor
 
-Try not using ctrl+v ctrl+z - imgui lags.
             Hold Tab to hide imgui

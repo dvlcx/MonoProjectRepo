@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -30,7 +31,6 @@ namespace MonoProject.EngineComponents
             _game = game; 
         }
 
-
         public override void Initialize()
         {
             ListChanged = false;
@@ -49,7 +49,7 @@ namespace MonoProject.EngineComponents
             _selectedEffect = _game.Content.Load<Effect>("Content//SolidWireframe");
             base.LoadContent();
         }
-
+        public Action ToUpdate {get; set;} = null;
         private ButtonState _leftButtonLast = new ButtonState();
         public override void Update(GameTime gameTime)
         {
@@ -82,14 +82,19 @@ namespace MonoProject.EngineComponents
                 DeleteFigure(selectedFigures);
             }
             
-            base.Update(gameTime);
+            ToUpdate?.Invoke();
+            if(ToUpdate is not null) ToUpdate = null;
+
             _leftButtonLast = MouseState.LeftButton;
+            
+            base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
             DrawFigures();
 
             _spriteBatch.Begin();
@@ -97,7 +102,7 @@ namespace MonoProject.EngineComponents
             _spriteBatch.End();
 
             _axes.Draw(GraphicsDevice, _basicEffect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix, Matrix.Identity);
-
+            
             base.Draw(gameTime);
         }
 
@@ -106,7 +111,10 @@ namespace MonoProject.EngineComponents
 
         private void DrawFigures()
         {
-            foreach (var fig in Figures) fig.DrawFigure(GraphicsDevice, _selectedEffect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix);
+            foreach (var fig in Figures) 
+            {
+                fig.DrawFigure(GraphicsDevice, _selectedEffect, _editorCam.ViewMatrix, _editorCam.ProjectionMatrix);
+            }
         }
 
         private delegate void ActionRef<T>(ref T item);

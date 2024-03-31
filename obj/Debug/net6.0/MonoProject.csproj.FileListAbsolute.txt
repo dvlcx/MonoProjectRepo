@@ -59,10 +59,10 @@ D:/MonoProject/bin/Debug/net6.0/Content/SolidWireframe.xnb
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.AssemblyInfo.cs
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.csproj.CoreCompileInputs.cache
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.sourcelink.json
-/home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.csproj.CopyComplete
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.dll
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/refint/MonoProject.dll
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.pdb
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProject.genruntimeconfig.cache
 /home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/ref/MonoProject.dll
 /home/dvlcx/Projects/MonoProjectRepo/bin/Debug/net6.0/Content/error.xnb
+/home/dvlcx/Projects/MonoProjectRepo/obj/Debug/net6.0/MonoProj.11C3FBD8.Up2Date

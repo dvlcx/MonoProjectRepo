@@ -1,20 +1,50 @@
-using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Diagnostics;
-using System.IO;
+using System.Text;
 using System.Linq;
+using Num = System.Numerics;
+using ImGuiNET;
+using MonoProject.ImGuiComponent;
+
+using System.IO;
+using System.Data;
 using System.Xml.Serialization;
+using System.Diagnostics;
 
-namespace MonoProject.ProjectSystem
+namespace MonoProject.EngineComponents
 {
-    static class ProjectHandler
+    sealed class ProjectManager : GameComponent
     {
-        public static Project currentProject = null;
+        private Game _game;
+        public Project CurrentProject {get; private set;} = null;
+        public Action ToUpdate {get; set;} = null;
 
-        public static void CreateProject(string path, string name, out string status)
+        public ProjectManager(Game game) : base (game)
+        {
+
+        }
+        
+        protected void LoadContent()
+        {
+
+        }
+
+        public override void Initialize()
+        {
+
+            base.Initialize();
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            ToUpdate?.Invoke();
+            if(ToUpdate is not null) ToUpdate = null;
+
+            base.Update(gameTime);
+        }
+        public void CreateProject(string path, string name, out string status)
         {
             if(!Directory.Exists(path)) 
             {
@@ -45,11 +75,10 @@ namespace MonoProject.ProjectSystem
                 if(prs == null) prs = new Projects();
                 prs.ProjectList.Add(new Project(name, path));
                 SerializeProjects(prs);
-                OpenProject(path, name);
             }
         }
 
-        private static void GetCreationString(string path, string name, out string fileName, out string arguments)
+        private void GetCreationString(string path, string name, out string fileName, out string arguments)
         {
             path = path.TrimStart(' ');
             path = path.TrimEnd(@"/\ ".ToCharArray());
@@ -65,33 +94,41 @@ namespace MonoProject.ProjectSystem
             }
         }
 
-        public static void OpenProject(string path, string name)
+        public void OpenProject(string path, string name)
         {
-            if (path is null || name is null || path.Length == 0 || name.Length == 0) return;
-            currentProject = new Project(name, path);
+            if (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(name)) return;
+            CurrentProject = new Project(name, path);
         }
         
-        public static void SerializeProjects(Projects prs)
+        public void SerializeProjects(Projects prs)
         {
             XmlSerializer xml = new XmlSerializer(typeof(Projects));
-            FileStream fs = new FileStream("Projects.xml", FileMode.OpenOrCreate);
-            xml.Serialize(fs, prs);
+            using (FileStream fs = new FileStream("Projects.xml", FileMode.OpenOrCreate))
+            {
+                xml.Serialize(fs, prs);
+            }
         }
 
-        public static Projects DeserializeProjects()
+        public Projects DeserializeProjects()
         {
             XmlSerializer xml = new XmlSerializer(typeof(Projects));
             using (FileStream fs = new FileStream("Projects.xml", FileMode.OpenOrCreate))
             {
                 if(fs.Length == 0) return null;
-                return (Projects)xml.Deserialize(fs);
+                Projects prs = (Projects)xml.Deserialize(fs);
+                CheckProjects(prs);
+                return prs;
             }
         }
 
 
+        public void CheckProjects(Projects prs)
+        {
+            prs.ProjectList.ForEach((x) => x.Exists = Directory.Exists(x.GetFullString()) ?  true : false);
+        }
+
         public static void Save()
         {
-            
             
         }
 
@@ -106,8 +143,5 @@ namespace MonoProject.ProjectSystem
             
             
         }
-
-
-
     }
 }
