@@ -17,23 +17,25 @@ namespace MonoProject.EngineComponents
 {
     sealed class ProjectManager : GameComponent
     {
-        private Game _game;
+        public Projects Projects {get; private set;} = null;
         public Project CurrentProject {get; private set;} = null;
-        public Action ToUpdate {get; set;} = null;
-
+        public string Status { get; private set; } = "...";
+        private Action ToUpdate {get; set;} = null;
         public ProjectManager(Game game) : base (game)
         {
 
         }
         
-        protected void LoadContent()
+        public void LoadContent()
         {
 
         }
 
         public override void Initialize()
         {
-
+            Projects = DeserializeProjects();
+            Projects ??= new Projects();
+            CheckProjects();
             base.Initialize();
         }
 
@@ -44,16 +46,17 @@ namespace MonoProject.EngineComponents
 
             base.Update(gameTime);
         }
-        public void CreateProject(string path, string name, out string status)
+
+        public void CreateProject(string path, string name)
         {
             if(!Directory.Exists(path)) 
             {
-                status = "There is no such folder!";
+                Status = "There is no such folder!";
                 return;
             }
             else if(name == "") 
             {
-                status = "Empty name!";
+                Status = "Empty name!";
                 return;
             }
 
@@ -68,15 +71,16 @@ namespace MonoProject.EngineComponents
                 RedirectStandardError = true
             };
             process.Start();
-            status = process.StandardOutput.ReadLine() + process.StandardError.ReadLine();
+            Status = process.StandardOutput.ReadLine() + process.StandardError.ReadLine();
             if (Directory.Exists(arguments.Substring(arguments.IndexOf("-o") + 3))) 
             {
-                Projects prs = DeserializeProjects();
-                if(prs == null) prs = new Projects();
-                prs.ProjectList.Add(new Project(name, path));
-                SerializeProjects(prs);
+                Projects.ProjectList.Add(new Project(name, path));
+                SerializeProjects();
             }
         }
+        public void CreateProjectNextFrame(string path, string name) =>
+            ToUpdate += () => CreateProject(path, name);
+
 
         private void GetCreationString(string path, string name, out string fileName, out string arguments)
         {
@@ -94,18 +98,25 @@ namespace MonoProject.EngineComponents
             }
         }
 
-        public void OpenProject(string path, string name)
+        public void OpenProject(Project pr)
         {
-            if (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(name)) return;
-            CurrentProject = new Project(name, path);
+            if (string.IsNullOrEmpty(pr.Path) || string.IsNullOrEmpty(pr.Name)) return;
+            CurrentProject = pr;
         }
-        
-        public void SerializeProjects(Projects prs)
+        public void OpenProjectNextFrame(Project pr) =>
+            ToUpdate += () => OpenProject(pr);
+
+        public void DeleteProject(Project pr)
+        {
+
+        }
+
+        private void SerializeProjects()
         {
             XmlSerializer xml = new XmlSerializer(typeof(Projects));
             using (FileStream fs = new FileStream("Projects.xml", FileMode.OpenOrCreate))
             {
-                xml.Serialize(fs, prs);
+                xml.Serialize(fs, Projects);
             }
         }
 
@@ -116,32 +127,17 @@ namespace MonoProject.EngineComponents
             {
                 if(fs.Length == 0) return null;
                 Projects prs = (Projects)xml.Deserialize(fs);
-                CheckProjects(prs);
                 return prs;
             }
         }
+        public void DeserializeProjectsNextFrame() =>
+            ToUpdate += () => DeserializeProjects(); 
 
-
-        public void CheckProjects(Projects prs)
+        private void CheckProjects()
         {
-            prs.ProjectList.ForEach((x) => x.Exists = Directory.Exists(x.GetFullString()) ?  true : false);
+            Projects.ProjectList.ForEach((x) => x.Exists = Directory.Exists(x.GetFullString()) ?  true : false);
         }
-
-        public static void Save()
-        {
-            
-        }
-
-        public static void BuildProject()
-        {
-            
-            
-        }
-
-        public static void RunProject()
-        {
-            
-            
-        }
+        public void CheckProjectsNextFrame() =>
+            ToUpdate += () => CheckProjects();
     }
 }

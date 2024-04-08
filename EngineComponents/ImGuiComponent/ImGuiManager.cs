@@ -58,8 +58,6 @@ namespace MonoProject.EngineComponents
         public override void Initialize()
         {
             _projectManager = (ProjectManager)_game.Components[0];
-            _projects = _projectManager.DeserializeProjects();
-
             _startWindow = new ImGuiMainWindow(ImGuiWindowFlags.None, new Num.Vector2(860,400), new Num.Vector2(200, 300),
              "Start", () => ProjectsOutput());
             _mainBar = new ImGuiMainMenuBar(() => MainBarOutput(_subWindow));
@@ -131,23 +129,22 @@ namespace MonoProject.EngineComponents
         }
 
         #region MainControls
-        private Projects _projects;
         private Project _selectedProject = null;
         private void ProjectsOutput()
         {
             if(ImGui.Button("New Project")) ChangeSubWindow(SubWindowType.NewProjectW);
 
-            _projectManager.ToUpdate += () => _projectManager.CheckProjects(_projects);
+            _projectManager.CheckProjectsNextFrame();
 
             ImGui.BeginListBox("", new Num.Vector2(185, 211));
-            foreach (var pr in _projects.ProjectList) 
+            if (_projectManager.Projects is null) return;
+            foreach (var pr in _projectManager.Projects.ProjectList) 
             {
-                string fullPathString = pr.GetFullString();
-
+                                
                 if(ImGui.Selectable(pr.Name, 
-                    pr.Path == _selectedProject?.Path && pr.Name == _selectedProject?.Name)){
-
-                     _selectedProject = pr;}
+                    pr.Path == _selectedProject?.Path && pr.Name == _selectedProject?.Name))
+                        _selectedProject = pr;
+                        
                 if(!pr.Exists)
                 {
                     ImGui.SameLine();
@@ -162,15 +159,14 @@ namespace MonoProject.EngineComponents
                 if(_selectedProject is not null && !_selectedProject.Exists) ImGui.BeginDisabled(); 
                 if(ImGui.Button("Open"))
                 {
-                    _projectManager.ToUpdate +=  () => _projectManager.OpenProject(_selectedProject?.Path, _selectedProject?.Name);
+                    _projectManager.OpenProjectNextFrame(_selectedProject);
                 }
                 ImGui.EndDisabled();
                 ImGui.SameLine(0, 100);
                 if(ImGui.Button("Delete"))
                 {
-                    _projects.ProjectList.RemoveAll(p => p.Name == _selectedProject.Name && p.Path == _selectedProject.Path);
+                    _projectManager.Projects.ProjectList.RemoveAll(p => p.Name == _selectedProject.Name && p.Path == _selectedProject.Path);
                     System.IO.File.WriteAllText("Projects.xml", string.Empty);
-                    _projectManager.ToUpdate +=  () => _projectManager.SerializeProjects(_projects);
                     _selectedProject = null;
                 }
             
@@ -201,7 +197,6 @@ namespace MonoProject.EngineComponents
                     if(ImGui.MenuItem("New Project...")) 
                     {
                         ChangeSubWindow(SubWindowType.NewProjectW);
-                        _status = "...";
                     }
                     ImGui.MenuItem("Open project...");
                     ImGui.EndMenu();
@@ -338,23 +333,22 @@ namespace MonoProject.EngineComponents
 
         private byte[] _path = new byte[100];
         private byte[] _name = new byte[50];
-        private string _status;
         private void NewProjectOutput()
         {
             ImGui.InputText("Target folder", _path, 100);
             ImGui.InputText("Project Name", _name, 50);
             if (ImGui.Button("Create"))
             {
-                _projectManager.CreateProject(Encoding.ASCII.GetString(Tools.CropByte(_path)), Encoding.ASCII.GetString(Tools.CropByte(_name)), out _status);
+                _projectManager.CreateProjectNextFrame(Encoding.ASCII.GetString(Tools.CropByte(_path)), Encoding.ASCII.GetString(Tools.CropByte(_name)));
             }  
-            ImGui.Text($"Status: \n{_status}".TrimEnd(':'));
+            ImGui.Text($"Status: \n{_projectManager.Status}".TrimEnd(':'));
         } 
+
         private static void AddFigureOutput(EditorManager em)
         {
             if (ImGui.Selectable("Polygon")) EditorManager.AddFigure(new PolygonFigure());
         }
-    
-    
+
         private static void HelpOutput()
         {
               ImGui.Text("Hi!");
